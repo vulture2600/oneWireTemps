@@ -1,3 +1,12 @@
+'''
+steve.a.mccluskey@gmail.com
+
+testing writing temp sensor data to influxDB
+uses sensors_config.py as config file
+
+'''
+
+
 from influxdb import InfluxDBClient
 from datetime import datetime
 import time
