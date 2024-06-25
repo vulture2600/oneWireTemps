@@ -7,7 +7,7 @@ import time
 import glob
 import json
 import datetime
-
+from sensors_config2 import ROOMS as ROOMS
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 
@@ -23,7 +23,7 @@ def key_exists(roomID, keys):
 def get_assignments():
 	'''get assignments by room'''
 
-	from sensors_config2 import ROOMS as ROOMS
+#	from sensors_config2 import ROOMS as ROOMS
 	print("ASSIGNMENTS BY ROOM ID:")
 	print("Found " + str(len(ROOMS)) + " room IDs in configuration file.")
 	print("")
@@ -64,7 +64,7 @@ def read_temp(file):
 def reassign_sensors_to_rooms():
 	'''reassigns all sensors to rooms'''
 
-	from sensors_config2 import ROOMS as ROOMS
+#	from sensors_config2 import ROOMS as ROOMS
 	roomIDs             = [0] * len(ROOMS)
 	assigned            = [0] * len(ROOMS)
 	title               = [0] * len(ROOMS)
@@ -76,6 +76,9 @@ def reassign_sensors_to_rooms():
 		assigned[i] = False
 	print(" ")
 #	print(roomIDs)
+
+
+
 #	print(assigned)
 #	print(title)
 #	print(sensorIds)
@@ -114,25 +117,39 @@ def reassign_sensors_to_rooms():
 					assigned[x - 1] = True
 					print("")
 
-	write_config(sensorNewAssignment, roomIDs)
+	write_config(sensorNewAssignment, roomIDs, None)
 	print("Config file written!")
 #end def
 
-def write_config(sensorNewAssignment, roomIDs):
+def write_config(sensorNewAssignment, roomIDs, newRoom):
 	'''writes config file'''
+	count = int(len(ROOMS))
+	if newRoom is not None:
+		count += 1
 	with open ("sensors_config2.py", 'w') as f:
 		f.write("ROOMS = {")
 		f.write("\n")
-		for i in range (len(ROOMS)):
+		for i in range (count):
 			f.write("\t\"")
-			f.write(list(ROOMS.keys())[i])
+			f.write(sensorNewAssignment[i])
 			f.write("\": {\n\t\t")
 			f.write("\"id\": \"")
-			f.write(str(sensorNewAssignment[i]))
+			f.write(roomIDs[i])
 			f.write("\",\n\t\t")
 			f.write("\"title\": \"")
 			f.write(ROOMS[roomIDs[i]]['title'])
 			f.write("\"\n\t}")
+			if newRoom is not None:
+				f.write(",\n")
+				f.write("\t\"")
+				f.write(newRoom[0])
+				f.write("\": {\n\t\t")
+				f.write("\"id\": \"")
+				f.write(newRoom[1])
+				f.write("\", \n\t\t")
+				f.write("\"title\": \"")
+				f.write(newRoom[2])
+				f.write("\"\n\t}")
 			if (i < len(ROOMS) -1 ):
 				f.write(",")
 			f.write("\n")
@@ -161,7 +178,38 @@ def assign_unassigned_sensors_to_rooms():
 				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + "F."))
 
 
-#def add_a_room():
+def add_a_room():
+	'''add new room'''
+
+	print("ADD NEW ROOM:")
+	print("New room ID? No spaces, numbers  or special characters.")
+	newRoomID = input()
+	print("New room ID: " + str(newRoomID) + ".")
+	print("Room title?")
+	newRoomTitle = input()
+	print("New room title: " + str(newRoomTitle) + ".")
+	print(" ")
+	print("Does this look correct? Press 1 to confirm or 2 to retry:")
+	print("New room ID: " + str(newRoomID) + ". New room title: " + str(newRoomTitle) + ".")
+	confirm = input()
+	if (confirm == '1'):
+		print("New room added!")
+	else:
+		add_a_room()
+	print(" ")
+	print("Assign sensor to room? Press 1 to add or 2 to write new room to config file without sensor assignment:")
+	assign = input()
+	if (assign == '1'):
+		assign_unassigned_sensors_to_rooms()
+	if (assign == '2'):
+		newData = [newRoomID, "Unassigned", newRoomTitle]
+		room_id   = [0] * len(ROOMS)
+		sensor_id = [0] * len(ROOMS)
+		for i in range(len(ROOMS)):
+			room_id[i] = list(ROOMS.keys())[i]
+			sensor_id = ROOMS.get(room_id[i], {}).get('id')
+		write_config(sensor_id, room_id, newData)
+
 
 
 #starts here:
@@ -204,6 +252,7 @@ print("1) Reassign sensors")
 print("2) Add a room")
 print("3) Exit")
 sensorReassign = input()
+print(" ")
 #print(str(sensorReassign))
 
 if (sensorReassign == '1'):
@@ -221,8 +270,8 @@ if (sensorReassign == '1'):
 
 
 if (sensorReassign == '2'):
-	print("Add new room:")
-	#addNewRoom()
+	#print("Add new room:")
+	add_a_room()
 
 
 else:

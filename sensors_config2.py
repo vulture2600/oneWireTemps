@@ -1,54 +1,54 @@
 ROOMS = {
-	"livingRoom": {
-		"id": "28-000006decbf1",
+	"28-000006decbf1": {
+		"id": "livingRoom",
 		"title": "Living Room"
 	},
-	"upstairs": {
-		"id": "28-000008d4f4c7",
+	"28-000008d4f4c7": {
+		"id": "upstairs",
 		"title": "Upstairs"
 	},
-	"office": {
-		"id": "28-01192f06da20",
+	"28-01192f06da20": {
+		"id": "office",
 		"title": "Office"
 	},
-	"guestRoom": {
-		"id": "28-01192f095d7f",
+	"28-01192f095d7f": {
+		"id": "guestRoom",
 		"title": "Guest Room"
 	},
-	"stevesRoom": {
-		"id": "28-01192ed8aaa3",
+	"28-01192ed8aaa3": {
+		"id": "stevesRoom",
 		"title": "Steve's Room"
 	},
-	"attic": {
-		"id": "28-01192f22b1a4",
+	"28-01192f22b1a4": {
+		"id": "attic",
 		"title": "Attic"
 	},
-	"basement": {
-		"id": "28-01192f3de042",
+	"28-01192f3de042": {
+		"id": "basement",
 		"title": "Basement"
 	},
-	"freezer": {
-		"id": "28-01205409ef9c",
+	"28-01205409ef9c": {
+		"id": "freezer",
 		"title": "Freezer"
 	},
-	"sammyDoor": {
-		"id": "28-000008d3f82d",
+	"28-000008d3f82d": {
+		"id": "sammyDoor",
 		"title": "Sammy's Door"
 	},
-	"garage": {
-		"id": "28-000006deba97",
+	"28-000006deba97": {
+		"id": "garage",
 		"title": "Garage"
 	},
-	"outside": {
-		"id": "28-00000543b4da",
+	"28-00000543b4da": {
+		"id": "outside",
 		"title": "Outside"
 	},
-	"incubator": {
-		"id": "28-01192f320a61",
+	"28-01192f320a61": {
+		"id": "incubator",
 		"title": "Incubation Chamber"
 	},
-	"fruiting": {
-		"id": "28-000006526e62",
+	"28-000006526e62": {
+		"id": "fruiting",
 		"title": "Fruiting Chamber"
 	}
 }
