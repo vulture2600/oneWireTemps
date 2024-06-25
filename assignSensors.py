@@ -212,19 +212,15 @@ def add_a_room():
 
 
 
-#starts here:
-#print(" ")
-#get_assignments()
 
 def get_devices_on_bus():
 	'''shows all devices on 1wire bus and shows room assignments, if any'''
+	sensorIds = os.listdir("/sys/bus/w1/devices")
 	print("FOUND " + str((len(sensorIds) -1)) + " DEVICES ON BUS:")
 	from sensors_config2 import ROOMS as ROOMS
 	for sensor in range(len(sensorIds)):
 		sensorAssigned = False
 		if (sensorIds[sensor].find('28-') != -1):
-			temp = read_temp(sensorIds[sensor])
-
 			for i in range(len(ROOMS)):
 				room_id = list(ROOMS.keys())[i]
 
@@ -236,49 +232,49 @@ def get_devices_on_bus():
 						break
 
 			if (sensorAssigned == True):
-				print("Sensor ID: " + str(sensorIds[sensor]) + " assigned to: " + str(room_id) + ". Temp = " + str(temp) + "F.")
+				print("Sensor ID: " + str(sensorIds[sensor]) + " assigned to: " + str(room_id) + ". Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 			else:
-				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + str(temp) + "F.")
+				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 
-#starts here:
-print(" ")
-get_assignments()
-get_devices_on_bus()
+if __name__ == "__main__":
+	print(" ")
+	get_assignments()
+	get_devices_on_bus()
 
-print(" ")
-print(" ")
-print("What would you like to do now?")
-print("1) Reassign sensors")
-print("2) Add a room")
-print("3) Exit")
-sensorReassign = input()
-print(" ")
-#print(str(sensorReassign))
+	print(" ")
+	print(" ")
+	print("What would you like to do now?")
+	print("1) Reassign sensors")
+	print("2) Add a room")
+	print("3) Exit")
+	sensorReassign = input()
+	print(" ")
+	#print(str(sensorReassign))
 
-if (sensorReassign == '1'):
-	print("Do you want to")
-	print("1) Reassign all sensors to rooms?")
-	print("2) Assign only unassigned sensors?")
-	sensorReassignType = int(input())
+	if (sensorReassign == '1'):
+		print("Do you want to")
+		print("1) Reassign all sensors to rooms?")
+		print("2) Assign only unassigned sensors?")
+		sensorReassignType = int(input())
 
-	if (sensorReassignType == 1):
-		reassign_sensors_to_rooms()
+		if (sensorReassignType == 1):
+			reassign_sensors_to_rooms()
 
-	if (sensorReassignType == 2):
-		assign_unassigned_sensors_to_rooms()
-
-
-
-if (sensorReassign == '2'):
-	#print("Add new room:")
-	add_a_room()
-
-
-else:
-	print("Done.")
+		if (sensorReassignType == 2):
+			assign_unassigned_sensors_to_rooms()
 
 
 
-#end all
+	if (sensorReassign == '2'):
+		#print("Add new room:")
+		add_a_room()
+
+
+	else:
+		print("Done.")
+
+
+
+	#end all
 
 
