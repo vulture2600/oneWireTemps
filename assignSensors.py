@@ -63,8 +63,6 @@ def read_temp(file):
 
 def reassign_sensors_to_rooms():
 	'''reassigns all sensors to rooms'''
-
-#	from sensors_config2 import ROOMS as ROOMS
 	roomIDs             = [0] * len(ROOMS)
 	assigned            = [0] * len(ROOMS)
 	title               = [0] * len(ROOMS)
@@ -75,14 +73,6 @@ def reassign_sensors_to_rooms():
 			title[i] = ROOMS.get(roomIDs[i], {}).get('title')
 		assigned[i] = False
 	print(" ")
-#	print(roomIDs)
-
-
-
-#	print(assigned)
-#	print(title)
-#	print(sensorIds)
-
 	print("")
 	for sensor in range (len(sensorIds)):
 		if (sensorIds[sensor].find('28-') != -1):
@@ -94,7 +84,6 @@ def reassign_sensors_to_rooms():
 					print(str((i + 1)) + "): " + str(title[i]))
 
 			print(" ")
-
 			print("Input 1 - " + str(len(ROOMS)) + ". Enter zero to leave unassigned.")
 			assignment = int(input())
 
@@ -116,45 +105,47 @@ def reassign_sensors_to_rooms():
 					sensorNewAssignment[x - 1] = str(sensorIds[sensor])
 					assigned[x - 1] = True
 					print("")
-
-	write_config(sensorNewAssignment, roomIDs, None)
-	print("Config file written!")
+	write_config(roomIDs, sensorNewAssignment, title, None)
 #end def
 
-def write_config(sensorNewAssignment, roomIDs, newRoom):
+def write_config(roomID, sensorID, title, newRoom):
 	'''writes config file'''
 	count = int(len(ROOMS))
-	if newRoom is not None:
-		count += 1
 	with open ("sensors_config2.py", 'w') as f:
 		f.write("ROOMS = {")
 		f.write("\n")
 		for i in range (count):
 			f.write("\t\"")
-			f.write(sensorNewAssignment[i])
+			f.write(roomID[i])
 			f.write("\": {\n\t\t")
 			f.write("\"id\": \"")
-			f.write(roomIDs[i])
+			f.write(sensorID[i])
 			f.write("\",\n\t\t")
 			f.write("\"title\": \"")
-			f.write(ROOMS[roomIDs[i]]['title'])
+			f.write(title[i])
 			f.write("\"\n\t}")
-			if newRoom is not None:
-				f.write(",\n")
-				f.write("\t\"")
-				f.write(newRoom[0])
-				f.write("\": {\n\t\t")
-				f.write("\"id\": \"")
-				f.write(newRoom[1])
-				f.write("\", \n\t\t")
-				f.write("\"title\": \"")
-				f.write(newRoom[2])
-				f.write("\"\n\t}")
-			if (i < len(ROOMS) -1 ):
+			if (i < len(ROOMS) - 1):
 				f.write(",")
-			f.write("\n")
-		f.write("}")
-	f.close()
+				f.write("\n")
+		if newRoom is not None:
+			f.write(",\n")
+			f.write("\t\"")
+			f.write(newRoom[0])
+			f.write("\": {\n\t\t")
+			f.write("\"id\": \"")
+			f.write(newRoom[1])
+			f.write("\", \n\t\t")
+			f.write("\"title\": \"")
+			f.write(newRoom[2])
+			f.write("\"\n\t}")
+		f.write("\n}")
+#		f.write("\n},\n")
+#		f.write("Timestamp = {\n")
+#		f.write("\t\"timeStamp\": \"")
+#		f.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+#		f.write("\"\n}")
+		f.close()
+	print("Config file written!")
 #end write_config()
 
 
@@ -205,10 +196,12 @@ def add_a_room():
 		newData = [newRoomID, "Unassigned", newRoomTitle]
 		room_id   = [0] * len(ROOMS)
 		sensor_id = [0] * len(ROOMS)
+		title     = [0] * len(ROOMS)
 		for i in range(len(ROOMS)):
 			room_id[i] = list(ROOMS.keys())[i]
-			sensor_id = ROOMS.get(room_id[i], {}).get('id')
-		write_config(sensor_id, room_id, newData)
+			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
+			title[i]     = ROOMS.get(room_id[i], {}).get('title')
+		write_config(room_id, sensor_id, title, newData)
 
 
 
