@@ -149,8 +149,13 @@ def write_config(roomID, sensorID, title, newRoom):
 
 def assign_unassigned_sensors_to_rooms():
 	'''shows only unassigned sensors and unassigned rooms'''
+	roomIDs             = [0] * len(ROOMS)
+	assigned            = [0] * len(ROOMS)
+	title               = [0] * len(ROOMS)
+	sensorNewAssignment = [0] * len(ROOMS)
 	from sensors_config2 import ROOMS as ROOMS
 	unassignedSensors = []
+	unassignedRooms = []
 	print("Sensors found on bus that are unassigned to rooms:")
 	for sensor in range(len(sensorIds)):
 		sensorAssigned = False
@@ -167,15 +172,38 @@ def assign_unassigned_sensors_to_rooms():
 			if (sensorAssigned != True):
 				unassignedSensors.append(sensorIds[sensor])
 				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + "F."))
+	print(" ")
+	print("Room IDs that have no assigned sensor:")
+	for i in range(len(ROOMS)):
+		room_id = list(ROOMS.keys())[i]
+		if key_exists(ROOMS, [room_id, 'id']):
+			sensor_id = ROOMS.get(room_id, {}).get('id')
+			if (sensor_id.find('28-') == -1):
+				unassignedRooms.append(room_id)
+				print("Room ID: " + str(room_id) + " has no assigned sensor.")
+
 
 	print(" ")
 	print("Found " + str(len(unassignedSensors)) + " unassigned sensors on bus.")
+	print("Found " + str(len(unassignedRooms)) + " rooms with no assigned sensors.")
+	print(" ")
 	print("Assign to unassigned rooms? Press 1 to assign them or 2 to return.")
 	textInput = input()
 	if (textInput == '1'):
-		for i in range(len(unassignedSensors)):	
+		for i in range(len(unassignedSensors)):
 			print("Assign " + str(unassignedSensors[i]) + " to ")
+			for j in range(len(unassignedRooms)):
+				print(str(j) + ") " + str(unassignedRooms[j]))
+			assignRoom = input()
+			while (assigned[assignRoom - 1] != False and assignRoom != 0):
+				print("Sensor already assigned. Please choose from list.")
+				assignRoom = int(input())
 #end assign_unassigned_sensors_to_rooms()
+## resync	
+
+
+
+
 
 def add_a_room():
 	'''add new room'''
