@@ -52,7 +52,11 @@ ROOMS = {
 		"title": "Fruiting Chamber"
 	},
 	"shedInside": {
-		"id": "Unassigned", 
+		"id": "Unassigned",
 		"title": "Shed Inside"
+	},
+	"shedOutside": {
+		"id": "Unassigned", 
+		"title": "Shed Outside"
 	}
 }
