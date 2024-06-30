@@ -154,13 +154,13 @@ def assign_unassigned_sensors_to_rooms():
 	print("")
 	print("REASSIGN ONLY UNASSIGNED SENSORS:")
 	print("")
-	
-	sensorNewAssignment = []
-	sensorNewRoom = []
-	unassignedSensors = []
-	unassignedRooms = []
 
-	print("Sensors found on bus that are unassigned to rooms:")
+	sensorNewAssignment = []
+	sensorNewRoom       = []
+	unassignedSensors   = []
+	unassignedRooms     = []
+
+	print("SENSORS FOUND ON BUS THAT ARE NOT ASSIGNED TO ROOMS:")
 	for sensor in range(len(sensorIds)):
 		sensorAssigned = False
 		if (sensorIds[sensor].find('28-') != -1):
@@ -177,9 +177,9 @@ def assign_unassigned_sensors_to_rooms():
 				unassignedSensors.append(sensorIds[sensor])
 				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + "F."))
 #	got all unassigned sensors.
-# 			
+
 	print(" ")
-	print("Room IDs that have no assigned sensor:")
+	print("ROOM IDs THAT HAVE NO ASSIGNED SENSOR:")
 	for i in range(len(ROOMS)):
 		room_id = list(ROOMS.keys())[i]
 		if key_exists(ROOMS, [room_id, 'id']):
@@ -188,42 +188,51 @@ def assign_unassigned_sensors_to_rooms():
 				unassignedRooms.append(room_id)
 				print("Room ID: " + str(room_id) + " has no assigned sensor.")
 #	got all unassigned rooms.
-	assigned = [0] * len(unassignedSensors)
 
 	print(" ")
 	print("Found " + str(len(unassignedSensors)) + " unassigned sensors on bus.")
-	print("Found " + str(len(unassignedRooms)) + " rooms with no assigned sensors.")
+	print("Found " + str(len(unassignedRooms)) +   " rooms with no assigned sensors.")
 	print(" ")
 	print("Assign to unassigned rooms? Press 1 to assign them or 2 to return.")
 	textInput = input()
 	if (textInput == '1'):
+		print (str(len(unassignedSensors)))
+		assigned = [False] * len(unassignedSensors)
+		print(assigned)
 		for i in range(len(unassignedSensors)):
 			print("Assign " + str(unassignedSensors[i]) + " to ")
 			for j in range(len(unassignedRooms)):
 				if (assigned[j] == False):
-					print(str(j + 1) + ") " + str(unassignedRooms[j]))
+					print(str(j + 1) + "): " + str(unassignedRooms[j]))
 
 			print(" ")
 			print("Input 1 - " + str(len(unassignedRooms)) + ". Enter zero to leave unassigned.")
 			assignRoom = int(input())
 
-			while (assigned[assignRoom - 1] != False and assignRoom != 0):
-				print("Sensor already assigned. Please choose from list.")
-				assignRoom = int(input())
 
-			while (assignRoom > len(unassignedRooms)):
-				print("Assignment out of range. Please enter 0 - " + str(len(unassignedRooms)) + ".")
-				assignRoom = int(input())		
+			while (assignRoom > len(unassignedRooms)) or  (assigned[assignRoom - 1] != False and assignRoom != 0):
+				if (assignRoom > len(unassignedRooms)):
+					print("Assignment out of range. Please enter 0 - " + str(len(unassignedRooms)) + ".")
+					assignRoom = int(input())
+
+				elif (assigned[assignRoom - 1] != False and assignRoom !=0):
+					print("Sensor already assigned. Please choose from list.")
+					assignRoom = int(input())
+
+
+#			while (assigned[assignRoom - 1] != False and assignRoom != 0):
+#				print("Sensor already assigned. Please choose from list.")
+#				assignRoom = int(input())
 
 			if (assignRoom == 0):
 				print("Sensor " + str(unassignedSensors[i]) + " remains unassigned.")
 				print("")
 
-			for x in range(1, len(unassignedSensors)):
+			for x in range(1, len(unassignedSensors) + 1):
 				if (assignRoom == x):
 					print("Sensor " + str(unassignedSensors[i]) + " assigned to " + str(unassignedRooms[x - 1]))
 					sensorNewAssignment.append(str(unassignedSensors[i]))
-					sensorNewRoom.append(str(unassignedRooms[x - 1]))
+					sensorNewRoom.append(str(unassignedRooms[i]))
 					assigned[x - 1] = True
 					print("")
 
@@ -303,7 +312,7 @@ def get_devices_on_bus():
 			if (sensorAssigned == True):
 				print("Sensor ID: " + str(sensorIds[sensor]) + " assigned to: " + str(room_id) + ". Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 			else:
-				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+				print("Sensor ID: " + str(sensorIds[sensor]) + " ------------ UNASSIGNED. Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 #end get_devices_on_bus()
 
 
