@@ -60,17 +60,19 @@ def read_temp(file):
 #end read_temp()
 
 def reassign_sensors_to_rooms():
+	print("")
+	print("REASSIGN ALL SENSORS:")
 	'''reassigns all sensors to rooms'''
 	roomIDs             = [0] * len(ROOMS)
 	assigned            = [0] * len(ROOMS)
 	title               = [0] * len(ROOMS)
 	sensorNewAssignment = [0] * len(ROOMS)
+
 	for i in range(len(ROOMS)):
 		roomIDs[i] = list(ROOMS.keys())[i]
 		if key_exists(ROOMS, [roomIDs[i], 'title']):
 			title[i] = ROOMS.get(roomIDs[i], {}).get('title')
 		assigned[i] = False
-	print(" ")
 	print("")
 	for sensor in range (len(sensorIds)):
 		if (sensorIds[sensor].find('28-') != -1):
@@ -149,13 +151,15 @@ def write_config(roomID, sensorID, title, newRoom):
 
 def assign_unassigned_sensors_to_rooms():
 	'''shows only unassigned sensors and unassigned rooms'''
-	roomIDs             = [0] * len(ROOMS)
-	assigned            = [0] * len(ROOMS)
-	title               = [0] * len(ROOMS)
-	sensorNewAssignment = [0] * len(ROOMS)
-#	from sensors_config2 import ROOMS as ROOMS
+	print("")
+	print("REASSIGN ONLY UNASSIGNED SENSORS:")
+	print("")
+	
+	sensorNewAssignment = []
+	sensorNewRoom = []
 	unassignedSensors = []
 	unassignedRooms = []
+
 	print("Sensors found on bus that are unassigned to rooms:")
 	for sensor in range(len(sensorIds)):
 		sensorAssigned = False
@@ -184,6 +188,7 @@ def assign_unassigned_sensors_to_rooms():
 				unassignedRooms.append(room_id)
 				print("Room ID: " + str(room_id) + " has no assigned sensor.")
 #	got all unassigned rooms.
+	assigned = [0] * len(unassignedSensors)
 
 	print(" ")
 	print("Found " + str(len(unassignedSensors)) + " unassigned sensors on bus.")
@@ -197,6 +202,7 @@ def assign_unassigned_sensors_to_rooms():
 			for j in range(len(unassignedRooms)):
 				if (assigned[j] == False):
 					print(str(j + 1) + ") " + str(unassignedRooms[j]))
+
 			print(" ")
 			print("Input 1 - " + str(len(unassignedRooms)) + ". Enter zero to leave unassigned.")
 			assignRoom = int(input())
@@ -216,16 +222,30 @@ def assign_unassigned_sensors_to_rooms():
 			for x in range(1, len(unassignedSensors)):
 				if (assignRoom == x):
 					print("Sensor " + str(unassignedSensors[i]) + " assigned to " + str(unassignedRooms[x - 1]))
-					sensorNewAssignment[x - 1] = str(unassignedSensors[i])
+					sensorNewAssignment.append(str(unassignedSensors[i]))
+					sensorNewRoom.append(str(unassignedRooms[x - 1]))
 					assigned[x - 1] = True
 					print("")
-	
-	write_config()
+
+	#	build new config:
+		title               = [0] * len(ROOMS)
+		roomID              = [0] * len(ROOMS)
+		sensorID            = [0] * len(ROOMS)
+
+		for i in range(len(ROOMS)):
+			roomID[i] = list(ROOMS.keys())[i]
+			if key_exists (ROOMS, [roomID[i], 'title']):
+				title[i] = str(ROOMS.get(roomID[i], {}).get('title'))
+						 			
+			if key_exists (ROOMS, [roomID[i], 'id']):
+				sensorID[i] = (str(ROOMS.get(roomID[i], {}).get('id')))
+				if (sensorID[i] == 'Unassigned' or sensorID[i].find('28-') == -1):
+					for j in range(len(sensorNewRoom)):
+						if (roomID[i] == sensorNewRoom[j]):
+							sensorID[i] = sensorNewAssignment[j]
+
+		write_config(roomID, sensorID, title, None)
 #end assign_unassigned_sensors_to_rooms()
-## resync	
-
-
-
 
 
 def add_a_room():
@@ -247,11 +267,10 @@ def add_a_room():
 	else:
 		add_a_room()
 	print(" ")
-	print("Assign sensor to room? Press 1 to add or 2 to write new room to config file without sensor assignment:")
+	print("Assign sensor to room? Press 1 to add new room to config file or press 2 to exit.")
 	assign = input()
+
 	if (assign == '1'):
-		assign_unassigned_sensors_to_rooms()
-	if (assign == '2'):
 		newData = [newRoomID, "Unassigned", newRoomTitle]
 		room_id   = [0] * len(ROOMS)
 		sensor_id = [0] * len(ROOMS)
@@ -305,10 +324,11 @@ if __name__ == "__main__":
 	#print(str(sensorReassign))
 
 	if (sensorReassign == '1'):
-		print("Do you want to")
+		print("Do you want to:")
 		print("1) Reassign all sensors to rooms?")
 		print("2) Assign only unassigned sensors?")
 		sensorReassignType = int(input())
+		print("")
 
 		if (sensorReassignType == 1):
 			reassign_sensors_to_rooms()
