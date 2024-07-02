@@ -1,3 +1,13 @@
+'''
+steve.a.mccluskey@gmail.com
+
+testing writing sht30 data to influxdb
+
+
+
+
+'''
+
 import smbus
 import time
 import os
@@ -6,40 +16,65 @@ import json
 import datetime
 import os.path
 from os import path
+from influxdb import InfluxDBClient
 
+
+client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'SandstoneSensorData')
+client.create_database('SandstoneSensorData')
+client.get_list_database()
+client.switch_database('SandstoneSensorData')
+print("client ok!")
 
 bus = smbus.SMBus(1)
 
 while True:
 
-    data = {
-        "sensors": {},
-        "timestamp":[
-        ]
-    }
-    bus.write_i2c_block_data(0x44, 0x2C, [0x06])
-    time.sleep(0.5)
-    data1 = bus.read_i2c_block_data(0x44, 0x00, 6)
+    print("Reading Sensor:")
+    try:
+        series = []
 
-    cTemp = ((((data1[0] * 256.0) + data1[1]) * 175) / 65535.0) - 45
-    fTemp = format(float((cTemp * 1.8) + 32), '.1f')
-    print(str(fTemp), "F")
 
-    humidity = format(float(100 * (data1[3] * 256 + data1[4]) / 65535.0), '.1f')
-    print(str(humidity), "%")
+        bus.write_i2c_block_data(0x44, 0x2C, [0x06])
+        time.sleep(0.5)
+        data1 = bus.read_i2c_block_data(0x44, 0x00, 6)
 
-    data["sensors"]["sht30"] = {'id': "sht30", 'temp': str(fTemp), 'humidity': str(humidity)}
-    #data["sensors"][str(rooms[i])] = {'id': str(ids[i]), 'temp': str(temps[i])}
-    print("1")
-    #data["sensors"]["1"] = {'id': "sht30", 'humidity': str(humidity)}
+        cTemp = ((((data1[0] * 256.0) + data1[1]) * 175) / 65535.0) - 45
+        fTemp = format(float((cTemp * 1.8) + 32), '.1f')
+        print(str(fTemp), "F")
 
-    dateTimeObj = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(str(dateTimeObj))
-    data["timestamp"].append({'dateTime': str(dateTimeObj)})
+        humidity = format(float(100 * (data1[3] * 256 + data1[4]) / 65535.0), '.1f')
+        print(str(humidity), "%")
 
-    with open('/var/www/html/mount/data/sht30.json', 'w') as g:
-        json.dump(data, g, indent = 2)
+        point = {
+            "measurement": "temps",
+            "tags": {
+                "sensor": 1,
+                "location": "shedSHT30",
+                "id": "i2c:0x44",
+                "type": "sht30",
+                "title": "Shed SHT30"
+            },
 
+            "fields": {
+                "temp": fTemp,
+                "humidity": humidity
+            }
+        }
+  
+        series.append(point)
+    except:
+        print("SHT30 not responding.")
 
     time.sleep(5)
 
+    try:
+        client.write_points(series)
+        print("Data posted to DB.")
+
+        result = client.query('select * from "temps" where time >= now() - 5s and time <= now()')
+        print("QUERY RECIEVED")
+        print("")
+        print(result)
+    except:
+        print("Server timeout")
+        print("")
