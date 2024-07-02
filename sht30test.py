@@ -60,12 +60,10 @@ while True:
                 "humidity": humidity
             }
         }
-  
         series.append(point)
+
     except:
         print("SHT30 not responding.")
-
-    time.sleep(5)
 
     try:
         client.write_points(series)
@@ -78,3 +76,5 @@ while True:
     except:
         print("Server timeout")
         print("")
+
+    time.sleep(5)
