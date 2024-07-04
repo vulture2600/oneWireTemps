@@ -7,6 +7,10 @@ import time
 import glob
 import json
 import datetime
+import math
+import importlib
+import imp
+import sensors_config2
 from sensors_config2 import ROOMS as ROOMS
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -29,16 +33,20 @@ def get_assignments():
 	#length of config file:
 	for i in range(len(ROOMS)):
 		room_id = list(ROOMS.keys())[i]
-		numSpaces = 20 - len(room_id)
+		room_id_in_quotes = str("'" + room_id + "'")
 #		print(numSpaces)
+		if key_exists(ROOMS, [room_id, 'title']):
+			title = str("'" + ROOMS.get(room_id, {}).get('title') + "'")
+		else:
+			title = "Untitled"
 		if key_exists(ROOMS, [room_id, 'id']):
 			sensor_id = ROOMS.get(room_id, {}).get('id')
-			leftPadding = room_id.ljust(20, ' ')
-			print(str(i + 1) + ") " + str(room_id.ljust(20, ' ')) + ": assigned to : " +  str(sensor_id))
+			print(str(i + 1) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "assigned to : " +  str(sensor_id))
 		else:
-			print(str(i + 1) + ") " + str(room_id.ljust(20, ' ')) + ": unassigned.")
+			print(str(i + 1) + ") " + str(room_id_in_quotes.ljust(22, ' ')) + ": unassigned.")
 
 	print(" ")
+	return
 #end get_assignments()
 
 def read_temp(file):
@@ -60,9 +68,9 @@ def read_temp(file):
 #end read_temp()
 
 def reassign_sensors_to_rooms():
+	'''reassigns all sensors to rooms'''
 	print("")
 	print("REASSIGN ALL SENSORS:")
-	'''reassigns all sensors to rooms'''
 	roomIDs             = [0] * len(ROOMS)
 	assigned            = [0] * len(ROOMS)
 	title               = [0] * len(ROOMS)
@@ -107,6 +115,8 @@ def reassign_sensors_to_rooms():
 					assigned[x - 1] = True
 					print("")
 	write_config(roomIDs, sensorNewAssignment, title, None)
+	print("")
+	return
 #end reassign_sensors_to_rooms()
 
 def write_config(roomID, sensorID, title, newRoom):
@@ -146,7 +156,9 @@ def write_config(roomID, sensorID, title, newRoom):
 #		f.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 #		f.write("\"\n}")
 		f.close()
-	print("Config file written!")
+	print("CONFIG FILE WRITTEN!")
+	print("")
+	return
 #end write_config()
 
 
@@ -200,8 +212,8 @@ def assign_unassigned_sensors_to_rooms():
 		print("No unnasigned sensors found.")
 		return
 	print("Assign to unassigned rooms? Press 1 to assign them or 2 to return.")
-	textInput = input()
-	if (textInput == '1'):
+	textInput = int(input())
+	if (textInput == 1):
 #		print (str(len(unassignedSensors)))
 		if len(unassignedRooms) > len(unassignedSensors):
 			assigned = [False] * len(unassignedRooms)
@@ -259,16 +271,55 @@ def assign_unassigned_sensors_to_rooms():
 							sensorID[i] = sensorNewAssignment[j]
 
 		write_config(roomID, sensorID, title, None)
+	return
 #end assign_unassigned_sensors_to_rooms()
 
+
+def remove_sensor_from_room():
+	''' allows you to remove a sensor assignment from a room'''
+	print("")
+	print("REMOVE SENSOR FROM ROOM:")
+	print("")
+	get_assignments()
+	print("")
+	print("Which room ID would you like to remove sensor from?")
+	remove = int(input())
+	while (remove > len(ROOMS) or remove == 0):
+		print("Selection out for range, please reselect from list")
+		remove = int(input())
+
+
+	room_id   = [0] * len(ROOMS)
+	sensor_id = [0] * len(ROOMS)
+	title     = [0] * len(ROOMS)
+
+	for i in range(len(ROOMS)):
+		room_id[i] = list(ROOMS.keys())[i]
+		if key_exists(ROOMS, [room_id[i], 'title']):
+			title[i] = ROOMS.get(room_id[i], {}).get('title')
+		if key_exists(ROOMS, [room_id[i], 'id']):
+			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
+
+	room_id_in_quotes = str("'" + room_id[remove - 1] + "'")
+	print("Remove sensor " + str(sensor_id[remove - 1]) + " from room " + str(room_id_in_quotes) + "?")
+	print("Press 1 to confirm. Press 2 to exit.")
+	confirm = int(input())
+	if (confirm == 1):
+		print("")
+		print("Confirmed. Writing config.")
+		sensor_id[remove - 1] = "Unassigned"
+		write_config(room_id, sensor_id, title, None)
+	
+	return
+#end remove_sensor_from_room()
 
 def add_a_room():
 	'''add new room'''
 
 	print("ADD NEW ROOM:")
-	print("New room ID? 20 characters max. No spaces, numbers, or special characters.")
+	print("New room ID? 20 characters max. No spaces or special characters.")
 	newRoomID = input()
-	if (len(newRoomID) > 20):
+	while (len(newRoomID) > 20):
 		print("Length must be less than 20 characters. Please re-enter:")
 		newRoomID = input()
 	print("New room ID: " + str(newRoomID) + ".")
@@ -278,16 +329,16 @@ def add_a_room():
 	print(" ")
 	print("Does this look correct? Press 1 to confirm or 2 to retry:")
 	print("New room ID: " + str(newRoomID) + ". New room title: " + str(newRoomTitle) + ".")
-	confirm = input()
-	if (confirm == '1'):
+	confirm = int(input())
+	if (confirm == 1):
 		print("New room added!")
 	else:
 		add_a_room()
 	print(" ")
 	print("Press 1 to add new room to config file or press 2 to exit.")
-	assign = input()
+	assign = int(input())
 
-	if (assign == '1'):
+	if (assign == 1):
 		newData = [newRoomID, "Unassigned", newRoomTitle]
 		room_id   = [0] * len(ROOMS)
 		sensor_id = [0] * len(ROOMS)
@@ -297,7 +348,80 @@ def add_a_room():
 			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
 			title[i]     = ROOMS.get(room_id[i], {}).get('title')
 		write_config(room_id, sensor_id, title, newData)
+	return
+	
 #end add_a_room()
+
+def edit_room():
+	print("EDIT A ROOM:")
+	print("Do you want to:")
+	print("1) Change room ID?")
+	print("2) Change room title?")
+	edit = int(input())
+
+	if (edit == 1):
+		print("CHANGE ROOM ID:")
+		print("Which room ID would you like to change?")
+		room_id   = [0] * len(ROOMS)
+		sensor_id = [0] * len(ROOMS)
+		title     = [0] * len(ROOMS)
+		for i in range(len(ROOMS)):
+			room_id[i]   = list(ROOMS.keys())[i]
+			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
+			title[i]     = ROOMS.get(room_id[i], {}).get('title')
+			print(str(i + 1) + ") " + str(room_id[i]))	
+
+		print("")
+		editRoom = int(input())
+		print("")
+		print("CHANGE ID '" + str(room_id[editRoom - 1]) + "' TO:")
+		print("Enter new room ID. 20 characters max. No spaces or special characters.")
+		newRoomID = input()
+		while (len(newRoomID) > 20):
+			print("Length must be less than 20 characters. Please re-enter:")
+			newRoomID = input()
+		print("Changing ID '" + str(room_id[editRoom - 1]) + "' to ID '" + str(newRoomID) + "'.")
+		print("The title: '" + str(title[editRoom - 1]) + "' is unchanged.")
+		print("")
+		print("Press 1 to confirm and write to config file. Press 2 to cancel.")
+		edit = int(input())
+		if (edit == 1):
+			print("Confirmed. Writing config:")
+			print("")
+			room_id[editRoom - 1] = newRoomID
+			write_config(room_id, sensor_id, title, None)
+			return
+
+	elif (edit == 2):
+		print("CHANGE ROOM TITLE:")
+		print("Which room title would you like to change?")
+		room_id   = [0] * len(ROOMS)
+		sensor_id = [0] * len(ROOMS)
+		title     = [0] * len(ROOMS)
+		for i in range(len(ROOMS)):
+			room_id[i]   = list(ROOMS.keys())[i]
+			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
+			title[i]     = ROOMS.get(room_id[i], {}).get('title')
+			print(str(i + 1) + ") " + str(title[i]))
+		print("")
+		editTitle = int(input())
+		print("")
+		print("CHANGE TITLE '" + str(title[editTitle - 1]) + "' TO:")
+		print("Enter new room title:")
+		newTitle = input()
+		print("Changing title '" + str(title[editTitle - 1]) + "' to title '" + str(newTitle) + "'")
+		print("The ID: '" + str(room_id[editTitle - 1]) + "' is unchanged.")
+		print("")
+		print("Press 1 to confirm and write to config file. Press 2 to cancel.")
+		edit = int(input())
+		if (edit == 1):
+			print("Confirmed. Writing config:")
+			print("")
+			title[editTitle - 1] = newTitle
+			write_config(room_id, sensor_id, title, None)
+			return
+	return
+#end edit_room()
 
 def get_devices_on_bus():
 	'''shows all devices on 1wire bus and shows room assignments, if any'''
@@ -318,52 +442,82 @@ def get_devices_on_bus():
 						break
 
 			if (sensorAssigned == True):
-				print("Sensor ID: " + str(sensorIds[sensor]) + "   assigned to: " + str(room_id.center(20, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+				room_id_in_quotes = str("'" + room_id + "'")
+				print("Sensor ID: " + str(sensorIds[sensor]) + "   assigned to: " + str(room_id_in_quotes.center(20, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 			else:
 				print("Sensor ID: " + str(sensorIds[sensor]) + "   assigned to: ---- UNASSIGNED --- . Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+	print("")
+	print("")
+	
+	return
 #end get_devices_on_bus()
 
 
 ############################################### STARTS HERE #########################################
 if __name__ == "__main__":
-	print(" ")
-	get_assignments()
-	get_devices_on_bus()
 
 	print(" ")
-	print(" ")
-	print("What would you like to do now?")
-	print("1) Reassign sensors")
-	print("2) Add a room")
-	print("3) Exit")
-	sensorReassign = input()
-	print(" ")
-	#print(str(sensorReassign))
+	print("***** SENSOR ASSIGNMENT UTILITY *****")
+	print("")
+	while True:
+		importlib.reload (sensors_config2)
+		print("WHAT WOULD YOU LIKE TO DO?")
+		print("1) View current config file.")
+		print("2) Show all devices on bus, their room assignments, and current temperature.")
+		print("3) Edit sensors assignments.")
+		print("4) Edit rooms.")
+		print("5) Exit.")
+		selection = int(input())
+		print(" ")
+		
 
-	if (sensorReassign == '1'):
-		print("Do you want to:")
-		print("1) Reassign all sensors to rooms?")
-		print("2) Assign only unassigned sensors?")
-		sensorReassignType = int(input())
-		print("")
+		if (selection == 1):
+			get_assignments()
 
-		if (sensorReassignType == 1):
-			reassign_sensors_to_rooms()
+		elif (selection == 2):
+			get_devices_on_bus()
 
-		if (sensorReassignType == 2):
-			assign_unassigned_sensors_to_rooms()
+		elif (selection == 3):
+			print("---REASSIGN SENSORS--")
+			print("Do you want to:")
+			print("1) Reassign all sensors to rooms?")
+			print("2) Assign only unassigned sensors?")
+			print("3) Remove a sensor from a room?")
+			sensorReassignType = int(input())
+			print("")
 
+			if (sensorReassignType == 1):
+				reassign_sensors_to_rooms()
 
+			elif (sensorReassignType == 2):
+				assign_unassigned_sensors_to_rooms()
 
-	if (sensorReassign == '2'):
-		#print("Add new room:")
-		add_a_room()
+			elif(sensorReassignType == 3):
+				print()
+				remove_sensor_from_room()
 
+		elif (selection == 4):
+			print("---EDIT ROOMS---")
+			print("Do you want to:")
+			print("1) Add a room?")
+			print("2) Edit an existing room?")
+			print("3) Remove a room?")
+			roomEdit = int(input())
+			print("")
+			if (roomEdit == 1):
+				add_a_room()
 
-	else:
-		print("Done.")
+			elif(roomEdit == 2):
+				edit_room()
 
+			elif(roomEdit == 3):
+				print()
+			#remove_room()
 
+		elif (selection == 5):
+			break
+
+print("Exiting. Good Day!")
 
 	#end all
 
