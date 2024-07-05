@@ -128,11 +128,10 @@ def reassign_sensors_to_rooms():
 
 def write_config(roomID, sensorID, title, newRoom):
 	'''writes config file'''
-	count = int(len(roomID))
 	with open ("sensors_config2.py", 'w') as f:
 		f.write("ROOMS = {")
 		f.write("\n")
-		for i in range (count):
+		for i in range (len(roomID)):
 			f.write("\t\"")
 			f.write(roomID[i])
 			f.write("\": {\n\t\t")
@@ -157,11 +156,6 @@ def write_config(roomID, sensorID, title, newRoom):
 			f.write(newRoom[2])
 			f.write("\"\n\t}")
 		f.write("\n}")
-#		f.write("\n},\n")
-#		f.write("Timestamp = {\n")
-#		f.write("\t\"timeStamp\": \"")
-#		f.write(str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-#		f.write("\"\n}")
 		f.close()
 	print("CONFIG FILE WRITTEN!")
 	print("")
@@ -526,6 +520,8 @@ if __name__ == "__main__":
 	#		ROOMS = pickle.loads(f.read())
 	#	print (str(ROOMS))
 		#importlib.reload (sensors_config2)
+		sensorIds = os.listdir("/sys/bus/w1/devices")
+		
 		print("WHAT WOULD YOU LIKE TO DO?")
 		print("1) View current config file.")
 		print("2) Show all devices on bus, their room assignments, and current temperature.")
