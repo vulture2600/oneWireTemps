@@ -13,7 +13,7 @@ import importlib
 import ast
 import pickle
 import sensors_config2
-from sensors_config2 import ROOMS as ROOMS
+#from sensors_config2 import ROOMS as ROOMS
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 #ROOMS = {}
@@ -77,10 +77,11 @@ def reassign_sensors_to_rooms():
 	'''reassigns all sensors to rooms'''
 	print("")
 	print("REASSIGN ALL SENSORS:")
+	sensorIds = os.listdir("/sys/bus/w1/devices")
 	roomIDs             = [0] * len(ROOMS)
 	assigned            = [0] * len(ROOMS)
 	title               = [0] * len(ROOMS)
-	sensorNewAssignment = [0] * len(ROOMS)
+	sensorNewAssignment = ["Unassigned"] * len(ROOMS)
 
 	for i in range(len(ROOMS)):
 		roomIDs[i] = list(ROOMS.keys())[i]
@@ -129,7 +130,7 @@ def reassign_sensors_to_rooms():
 def write_config(roomID, sensorID, title, newRoom):
 	'''writes config file'''
 	with open ("sensors_config2.py", 'w') as f:
-		f.write("ROOMS = {")
+		f.write("{")
 		f.write("\n")
 		for i in range (len(roomID)):
 			f.write("\t\"")
@@ -272,6 +273,8 @@ def assign_unassigned_sensors_to_rooms():
 						if (roomID[i] == sensorNewRoom[j]):
 							sensorID[i] = sensorNewAssignment[j]
 
+		print("")
+		print("Confirmed. Writing config.")
 		write_config(roomID, sensorID, title, None)
 	return
 #end assign_unassigned_sensors_to_rooms()
@@ -284,12 +287,15 @@ def remove_sensor_from_room():
 	print("")
 	get_assignments()
 	print("")
-	print("Which room ID would you like to remove sensor from?")
+	print("Which room ID would you like to remove sensor from? Enter 0 to cancel.")
 	remove = int(input())
+	if (remove == 0):
+		return
 	while (remove > len(ROOMS) or remove == 0):
-		print("Selection out for range, please reselect from list")
+		print("Selection out for range, please reselect from list. Enter 0 to cancel.")
 		remove = int(input())
-
+		if (remove == 0):
+			return
 
 	room_id   = [0] * len(ROOMS)
 	sensor_id = [0] * len(ROOMS)
@@ -483,7 +489,7 @@ def get_devices_on_bus():
 	'''shows all devices on 1wire bus and shows room assignments, if any'''
 	sensorIds = os.listdir("/sys/bus/w1/devices")
 	print("FOUND " + str((len(sensorIds) - 1)) + " DEVICES ON BUS:")
-	from sensors_config2 import ROOMS as ROOMS
+#	from sensors_config2 import ROOMS as ROOMS
 	for sensor in range(len(sensorIds)):
 		sensorAssigned = False
 		if (sensorIds[sensor].find('28-') != -1):
@@ -514,16 +520,19 @@ if __name__ == "__main__":
 
 	print(" ")
 	print("***** SENSOR ASSIGNMENT UTILITY *****")
-	print("")
+
 	while True:
-#		with open ("sensors_config2.py") as f:
-	#		ROOMS = pickle.loads(f.read())
-	#	print (str(ROOMS))
+		with open ("sensors_config2.py") as f:
+
+			ROOMS = f.read()
+#		print(ROOMS)
+		ROOMS = ast.literal_eval(ROOMS)
+		print(ROOMS)
 		#importlib.reload (sensors_config2)
 		sensorIds = os.listdir("/sys/bus/w1/devices")
-		
+		print("")
 		print("WHAT WOULD YOU LIKE TO DO?")
-		print("1) View current config file.")
+		print("1) View current config file, listed by room ID and title.")
 		print("2) Show all devices on bus, their room assignments, and current temperature.")
 		print("3) Edit sensors assignments.")
 		print("4) Edit rooms.")
