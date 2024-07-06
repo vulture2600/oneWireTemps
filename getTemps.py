@@ -3,18 +3,23 @@ steve.a.mccluskey@gmail.com
 
 testing writing temp sensor data to influxDB
 uses sensors_config.py as config file
+Updates:
+7/6/24 - updated to work with new config file format and other formatting tweaks in console output
 
 '''
 
 
 from influxdb import InfluxDBClient
-from datetime import datetime
-import time
+
+
 import os
-import glob
-import json
+
 import os.path
 from os import path
+import ast
+
+config_file = "sensors_config2.py"
+
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -56,7 +61,9 @@ def key_exists(roomID, keys):
 while True:
 	print("Reading Sensors:")
 	series = []
-	from sensors_config import ROOMS as ROOMS
+	with open(config_file) as f:
+		ROOMS = f.read()
+	ROOMS = ast.literal_eval(ROOMS)
 
 	#get number of rooms from config file and make arrays:
 	count = len(ROOMS)
@@ -75,8 +82,9 @@ while True:
 				title = ROOMS.get(room_id, {}).get('title')
 			else:
 				title = "Untitled"
-
-			print("Sensor " + str(i + 1) +  ") collected. Room ID: " + str(room_id) + ". Room title: " + str(title) + ". Sensor ID: " + str(sensor_id) + ", temp = " + str(temp)+ "F.")
+			room_id_in_quotes = str("'" + room_id + "'")
+			title_in_quotes = str("'" + title + "'")
+			print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
 
 			point = {
 				"measurement": "temps",

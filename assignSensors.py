@@ -1,9 +1,23 @@
-# steve.a.mccluskey@gmail.com
-# Utility that shows all OneWire temp sensors on the bus and allows you to assign them to the rooms and writes the configuration 
-# to the sensors_config.py file.
+''' steve.a.mccluskey@gmail.com
+ Utility that shows all OneWire temp sensors on the bus and allows you to assign them to the rooms and writes the configuration 
+ to the sensors_config.py file.
+
+Updates: 
+7/6/24 - spent the last few weeks revamping this to a pretty funciontal proof of concept. still planning to implement non number input error handling when selecting from list. otherwise, it appears things seem to be working as they should.
+
+
+'''
+
+
+
+
 
 import os
 import ast
+
+
+config_file = "sensors_config2.py"
+
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
 sensorIds = os.listdir("/sys/bus/w1/devices")
@@ -513,7 +527,7 @@ if __name__ == "__main__":
 	print("***** SENSOR ASSIGNMENT UTILITY *****")
 
 	while True:
-		with open ("sensors_config2.py") as f:
+		with open (config_file) as f:
 			ROOMS = f.read()
 		ROOMS = ast.literal_eval(ROOMS)
 		sensorIds = os.listdir("/sys/bus/w1/devices")
