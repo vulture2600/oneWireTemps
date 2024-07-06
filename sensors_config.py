@@ -1,4 +1,4 @@
-ROOMS = {
+{
     "livingRoom": {
         "id": "28-000006decbf1",
         "title": "Living Room"
