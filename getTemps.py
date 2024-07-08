@@ -10,10 +10,7 @@ Updates:
 
 
 from influxdb import InfluxDBClient
-
-
 import os
-
 import os.path
 from os import path
 import ast
@@ -110,16 +107,6 @@ while True:
 	try:
 		client.write_points(series)
 		print("Data posted to DB.")
-
-
-
-#bind_location = {'location': 'outside'}
-#result = client.query(query, bind_params=bind_location)
-
-
-#result = client.query('''SELECT * FROM "temps" WHERE "location"='incubator' and time >= now() - 10s and time <= now()''')
-
-
 
 		result = client.query('select * from "temps" where time >= now() - 5s and time <= now()')
 #		print(result)
