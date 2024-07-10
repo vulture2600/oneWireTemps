@@ -27,30 +27,30 @@ print("client ok!")
 
 adc = Adafruit_ADS1x15.ADS1115()
 
-channel = 0
-ch0GAIN = 1
-ch0maxPSI = 100
-ch0minPSI = 0
-ch0minADC = 3900
-ch0maxADC = 32768
+channel     = 0
+ch0GAIN     = 1
+ch0maxPSI   = 100
+ch0minPSI   = 0
+ch0minADC   = 3900
+ch0maxADC   = 32768
 
 while True:
     print("Reading ADC:")
     try:
-        series = []
-        value = adc.read_adc(channel, gain = ch0GAIN)
+        series  = []
+        value   = adc.read_adc(channel, gain = ch0GAIN)
         psi = format((((value - ch0minADC) * (ch0maxPSI - ch0minPSI)) / (ch0maxADC - ch0minADC) + ch0minPSI), '.1f')
         print (psi, "   ", value)
 
         point = {
             "measurement": "pressures",
             "tags": {
-                "sensor" : 1,
+                "sensor":   1,
                 "location": "manifold",
-                "id": "i2c:0x44",
-                "channel": channel,
-                "type": "ADS1115",
-                "title": "Manifold Pressure"
+                "id":       "i2c:0x44",
+                "channel":  channel,
+                "type":     "ADS1115",
+                "title":    "Manifold Pressure"
             },
 
             "fields": {

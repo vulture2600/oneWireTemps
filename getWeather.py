@@ -16,7 +16,7 @@ apiKey    = 'ce6df52db591b8e6b40f75c864518b61'
 lattitude = '44.9398'
 longitude = '-93.2533'
 units     = 'imperial'
-url = 'http://api.openweathermap.org/data/2.5/onecall?lat=' + lattitude + '&lon=' + longitude + '&exclude=minutely,hourly&appid=' + apiKey + '&units=' + units
+url       = 'http://api.openweathermap.org/data/2.5/onecall?lat=' + lattitude + '&lon=' + longitude + '&exclude=minutely,hourly&appid=' + apiKey + '&units=' + units
 
 client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'tempSensorData')
 client.create_database('tempSensorData')
@@ -26,7 +26,6 @@ print("client ok!")
 
 
 while True:
-
     try:
         weatherData = get(url).json()
         series = []
@@ -38,23 +37,24 @@ while True:
             },
 
             "fields": {
-                "humidity": weatherData['current']['humidity'],
-                "feelsLike": weatherData['current']['feels_like'],
-                "currentCondition": weatherData['current']['weather'][0]['main'],
-                "tempHigh": weatherData['daily'][0]['temp']['max'],
-                "tempLow": weatherData['daily'][0]['temp']['min'],
-                "dailyCondition": weatherData['daily'][0]['weather'][0]['main'],
+                "humidity":               weatherData['current']['humidity'],
+                "feelsLike":              weatherData['current']['feels_like'],
+                "currentCondition":       weatherData['current']['weather'][0]['main'],
+                "tempHigh":               weatherData['daily'][0]['temp']['max'],
+                "tempLow":                weatherData['daily'][0]['temp']['min'],
+                "dailyCondition":         weatherData['daily'][0]['weather'][0]['main'],
                 "dailyConditionTomorrow": weatherData['daily'][1]['weather'][0]['main'],
-                "tempHighTomorrow": weatherData['daily'][1]['temp']['max'],
-                "tempLowTomorrow": weatherData['daily'][1]['temp']['min'],
-                "windDirection": weatherData['current']['wind_deg'],
-                "windSpeed": weatherData['current']['wind_speed'],
-                "windGust": weatherData['daily'][0]['wind_gust']
-                
+                "tempHighTomorrow":       weatherData['daily'][1]['temp']['max'],
+                "tempLowTomorrow":        weatherData['daily'][1]['temp']['min'],
+                "windDirection":          weatherData['current']['wind_deg'],
+                "windSpeed":              weatherData['current']['wind_speed'],
+                "windGust":               weatherData['daily'][0]['wind_gust']
             }
         }
+
         series.append(point)
         print(point)
+
     except:
         print("weather failed")
         pass
@@ -64,6 +64,7 @@ while True:
         print("Data posted to DB.")
         result = client.query('select * from "weather" where time >= now() - 5s and time <= now()')
         print(result)
+
     except:
         print("server timeout")
         pass

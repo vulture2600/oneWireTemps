@@ -28,12 +28,9 @@ print("client ok!")
 bus = smbus.SMBus(1)
 
 while True:
-
     print("Reading Sensor:")
     try:
         series = []
-
-
         bus.write_i2c_block_data(0x44, 0x2C, [0x06])
         time.sleep(0.5)
         data1 = bus.read_i2c_block_data(0x44, 0x00, 6)
@@ -47,19 +44,21 @@ while True:
 
         point = {
             "measurement": "temps",
+
             "tags": {
-                "sensor": 1,
+                "sensor":   1,
                 "location": "shedSHT30",
-                "id": "i2c:0x44",
-                "type": "sht30",
-                "title": "Shed SHT30"
+                "id":       "i2c:0x44",
+                "type":     "sht30",
+                "title":    "Shed SHT30"
             },
 
             "fields": {
-                "temp": fTemp,
+                "temp":     fTemp,
                 "humidity": humidity
             }
         }
+
         series.append(point)
 
     except:
@@ -73,6 +72,7 @@ while True:
         print("QUERY RECIEVED")
         print("")
         print(result)
+        
     except:
         print("Server timeout")
         print("")

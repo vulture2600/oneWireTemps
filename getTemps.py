@@ -40,8 +40,8 @@ def read_temp(file):
 
 			if (position != -1):
 				temp_string = lines[1][position + 2:]
-				temp_c = float(temp_string) / 1000.0
-				temp_f = format((temp_c * 1.8 + 32.0), '.1f')
+				temp_c 		= float(temp_string) / 1000.0
+				temp_f 		= format((temp_c * 1.8 + 32.0), '.1f')
 				return temp_f
 		except:
 			return "Off"
@@ -70,31 +70,31 @@ while True:
 			room_id = list(ROOMS.keys())[i]
 			if key_exists(ROOMS, [room_id, 'id']):
 				sensor_id = ROOMS.get(room_id, {}).get('id')
-				temp = read_temp(sensor_id)
+				temp 	  = read_temp(sensor_id)
 			else:
 				sensor_id = "unassigned"
-				temp = "Off"
+				temp 	  = "Off"
 
 			if key_exists(ROOMS, [room_id, 'title']):
 				title = ROOMS.get(room_id, {}).get('title')
 			else:
 				title = "Untitled"
 			room_id_in_quotes = str("'" + room_id + "'")
-			title_in_quotes = str("'" + title + "'")
+			title_in_quotes   = str("'" + title + "'")
 			print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
 
 			point = {
 				"measurement": "temps",
 				"tags": {
-					"sensor": i + 1,
+					"sensor": 	i + 1,
 					"location": room_id,
-					"id": sensor_id,
-					"type": "ds18b20",
-					"title": title
+					"id": 		sensor_id,
+					"type": 	"ds18b20",
+					"title": 	title
 				},
 
 				"fields": {
-					"temp": temp
+					"temp": 	temp
 				}
 			}
 
