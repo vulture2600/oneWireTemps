@@ -14,8 +14,10 @@ import os
 import os.path
 from os import path
 import ast
+import time
+import datetime
 
-config_file = "sensors_config2.py"
+config_file = "/home/pi/oneWireTemps/sensors_config2.py"
 
 
 os.system('modprobe w1-gpio')
@@ -58,6 +60,7 @@ def key_exists(roomID, keys):
 while True:
 	print("Reading Sensors:")
 	series = []
+	dateTimeNow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	with open(config_file) as f:
 		ROOMS = f.read()
 	ROOMS = ast.literal_eval(ROOMS)
@@ -99,17 +102,28 @@ while True:
 			}
 
 			series.append(point)
+
 		except:
 			i = i + 1
 
+	point = {
+		"measurement": "temps",
+		"tags": {
+			"TempSensorData" : "mostRecent"
+		},
+		"fields": {
+			"timeStamp": dateTimeNow
+		}
+	}
+	series.append(point)
 	print(str(i + 1) + " sensors collected.")
-
+	print(series)
 	try:
 		client.write_points(series)
 		print("Data posted to DB.")
 
 		result = client.query('select * from "temps" where time >= now() - 5s and time <= now()')
-#		print(result)
+		print(result)
 		print("Query recieved.")
 		print(" ")
 	except:

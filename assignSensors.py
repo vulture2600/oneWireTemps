@@ -95,6 +95,7 @@ def reassign_sensors_to_rooms():
 
 		assigned[i] = False
 	print("")
+
 	for sensor in range (len(sensorIds)):
 		if (sensorIds[sensor].find('28-') != -1):
 		#skip w1_bus_master1 folder
@@ -127,6 +128,7 @@ def reassign_sensors_to_rooms():
 					sensorNewAssignment[x - 1] 	= str(sensorIds[sensor])
 					assigned[x - 1] 			= True
 					print("")
+
 	write_config(roomIDs, sensorNewAssignment, title, None)
 	print("")
 	return
@@ -168,6 +170,7 @@ def write_config(roomID, sensorID, title, newRoom):
 
 		f.write("\n}")
 		f.close()
+
 	print("CONFIG FILE WRITTEN!")
 	print("")
 	return
@@ -363,6 +366,7 @@ def add_a_room():
 	print("New room ID: '" + str(newRoomID) + "'.")
 	print("Room title?")
 	newRoomTitle = input()
+
 	print("New room title: '" + str(newRoomTitle) + "'.")
 	print(" ")
 	print("Does this look correct? Press 1 to confirm or 2 to retry:")
@@ -391,6 +395,7 @@ def add_a_room():
 			title[i]     = ROOMS.get(room_id[i], {}).get('title')
 
 		write_config(room_id, sensor_id, title, newData)
+		
 	return
 #end add_a_room()
 

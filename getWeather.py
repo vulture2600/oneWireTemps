@@ -7,6 +7,7 @@ updating to write to database instead of json file
 
 import json
 import time
+import datetime
 from requests import get
 from influxdb import InfluxDBClient
 
@@ -29,11 +30,13 @@ while True:
     try:
         weatherData = get(url).json()
         series = []
+        dateTimeNow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         point = {
             "measurement": "weather",
             "tags": {
-                "location": "Minneapolis"
+                "location": "Minneapolis",
+                "time": dateTimeNow
             },
 
             "fields": {
@@ -48,8 +51,10 @@ while True:
                 "tempLowTomorrow":        weatherData['daily'][1]['temp']['min'],
                 "windDirection":          weatherData['current']['wind_deg'],
                 "windSpeed":              weatherData['current']['wind_speed'],
-                "windGust":               weatherData['daily'][0]['wind_gust']
-            }
+                "windGust":               weatherData['daily'][0]['wind_gust'],
+                "timeStamp": dateTimeNow
+            },
+            "time": dateTimeNow
         }
 
         series.append(point)
@@ -62,7 +67,7 @@ while True:
     try:
         client.write_points(series)
         print("Data posted to DB.")
-        result = client.query('select * from "weather" where time >= now() - 5s and time <= now()')
+        result = client.query('select * from "weather" where time >= now() - 10m and time <= now()')
         print(result)
 
     except:
