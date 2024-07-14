@@ -1,6 +1,6 @@
 '''
 updating to write to database instead of json file
-
+7/14/24 - added time stamps to each db write
 
 
 '''
@@ -35,8 +35,7 @@ while True:
         point = {
             "measurement": "weather",
             "tags": {
-                "location": "Minneapolis",
-                "time": dateTimeNow
+                "location": "Minneapolis"
             },
 
             "fields": {

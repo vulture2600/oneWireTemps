@@ -5,6 +5,7 @@ testing writing temp sensor data to influxDB
 uses sensors_config.py as config file
 Updates:
 7/6/24 - updated to work with new config file format and other formatting tweaks in console output
+7/14/24 - added time stamps to each db write
 
 '''
 

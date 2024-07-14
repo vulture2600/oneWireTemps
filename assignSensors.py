@@ -5,7 +5,7 @@
 Updates: 
 7/6/24 - spent the last few weeks revamping this to a pretty funciontal proof of concept. still planning to implement non number input error handling when selecting from list. otherwise, it appears things seem to be working as they should.
 
-
+7/14/24 - 
 '''
 
 
