@@ -1,0 +1,11 @@
+[Unit]
+Description=Get Weather
+After=multi-user.target
+
+[Service]
+Type=Idle
+ExecStart=/usr/bin/python /home/pi/oneWireTemps/getWeather.py &
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
