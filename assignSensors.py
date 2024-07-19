@@ -5,7 +5,8 @@
 Updates: 
 7/6/24 - spent the last few weeks revamping this to a pretty funciontal proof of concept. still planning to implement non number input error handling when selecting from list. otherwise, it appears things seem to be working as they should.
 
-7/14/24 - 
+7/18/24 - decided to show current temp when showing current config, which takes longer to collect each sensor, but if its offline it wont show up in either list. that led me to find that get_temp() wasnt able to handle a sensor thats offline like in my other script. 
+
 '''
 
 
@@ -606,7 +607,7 @@ if __name__ == "__main__":
 		sensorIds = os.listdir("/sys/bus/w1/devices")
 		print("")
 		print("WHAT WOULD YOU LIKE TO DO?")
-		print("1) View current config file, listed by room ID and title; and sensor's current temperature.")
+		print("1) View current config file, listed by room ID and title; and current temperature.")
 		print("2) Show all devices on bus, their room assignments, and current temperature.")
 		print("3) Edit sensors assignments.")
 		print("4) Edit rooms.")
