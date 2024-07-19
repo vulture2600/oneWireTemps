@@ -52,7 +52,7 @@ def get_assignments():
 		if key_exists(ROOMS, [room_id, 'id']):
 			sensor_id = ROOMS.get(room_id, {}).get('id')
 			if (sensor_id != "Unassigned"):
-				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensorIds[i])) + "F.")
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensor_id)) + "F.")
 			else:
 				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ".")
 

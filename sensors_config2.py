@@ -40,7 +40,7 @@
 		"title": "Garage"
 	},
 	"outside": {
-		"id": "28-00000543b4da",
+		"id": "28-0120541e94ab",
 		"title": "Outside"
 	},
 	"incubator": {
@@ -50,13 +50,5 @@
 	"fruiting": {
 		"id": "28-000006526e62",
 		"title": "Fruiting Chamber"
-	},
-	"shedInside": {
-		"id": "Unassigned",
-		"title": "Shed Inside"
-	},
-	"shedOutside": {
-		"id": "Unassigned", 
-		"title": "Shed Outside"
 	}
 }
