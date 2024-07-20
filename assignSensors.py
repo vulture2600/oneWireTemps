@@ -41,7 +41,6 @@ def get_assignments():
 	for i in range(len(ROOMS)):
 		room_id 		  = list(ROOMS.keys())[i]
 		room_id_in_quotes = str("'" + room_id + "'")
-#		print(numSpaces)
 
 		if key_exists(ROOMS, [room_id, 'title']):
 			title = str("'" + ROOMS.get(room_id, {}).get('title') + "'")
@@ -84,7 +83,6 @@ def read_temp(file):
 			return "***OFFLINE***"
 	else:
 		return "***OFFLINE***"
-	#end if
 #end read_temp()
 
 
@@ -216,8 +214,6 @@ def assign_unassigned_sensors_to_rooms():
 			if (sensorAssigned != True):
 				unassignedSensors.append(sensorIds[sensor])
 				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + "F."))
-#		else:
-#			print("No unassigned sensors found.")
 #	got all unassigned sensors.
 
 	print(" ")
@@ -248,14 +244,12 @@ def assign_unassigned_sensors_to_rooms():
 	textInput = int(input())
 
 	if (textInput == 1):
-#		print (str(len(unassignedSensors)))
 		if len(unassignedRooms) > len(unassignedSensors):
 			assigned = [False] * len(unassignedRooms)
 
 		else:
 			assigned = [False] * len(unassignedSensors)
 
-#		print(assigned)
 		for i in range(len(unassignedSensors)):
 			print("Assign " + str(unassignedSensors[i]) + " to: ")
 
@@ -581,7 +575,7 @@ def get_devices_on_bus():
 					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: " + str(room_id_in_quotes.center(20, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 
 				else:
-					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ---- UNASSIGNED --- . Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ---- UNASSIGNED --- Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
 
 			except:
 				print("Sensor ID: " + str(sensorIds[sensor]) + " ****** OFFLINE ******")

@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=Idle
-ExecStart=/usr/bin/python /home/pi/oneWireTemps/getTemps.py 
+ExecStart=/usr/bin/python3 /home/pi/oneWireTemps/getTemps.py 
 Restart=always
 
 [Install]

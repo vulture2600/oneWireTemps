@@ -23,8 +23,11 @@ client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'tempSensorDat
 client.create_database('tempSensorData')
 client.get_list_database()
 client.switch_database('tempSensorData')
-print("client ok!")
 
+if client:
+    print("client ok!")
+else:
+    print("server failed!")
 
 while True:
     try:
