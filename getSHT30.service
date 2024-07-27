@@ -1,0 +1,12 @@
+[Unit]
+Description=Get Temps
+After=multi-user.target
+
+[Service]
+Type=Idle
+ExecStart=/usr/bin/python /home/pi/oneWireTemps/sht30test.py 
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

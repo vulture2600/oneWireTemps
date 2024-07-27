@@ -17,6 +17,8 @@ import os
 import ast
 import os.path
 from os import path
+import threading 
+
 config_file = "sensors_config2.py"
 
 os.system('modprobe w1-gpio')
@@ -31,11 +33,65 @@ def key_exists(roomID, keys):
 	return not keys and roomID is not None
 #end key_exists()
 
+def multi_threaded_file_reader(ROOMS):
+	threads = []
+	results = {}
+	
 
-def get_assignments():
+	def read_file_thread(file_path):
+		result = read_temp(file_path)
+		results[file_path] = result
+
+	for i in range (len(ROOMS)):
+		room_id = list(ROOMS.keys())[i]
+		if key_exists(ROOMS, [room_id, 'id']):
+			sensor_id = ROOMS.get(room_id, {}).get('id')
+			thread = threading.Thread(target = read_file_thread, args = (sensor_id,))
+			threads.append(thread)
+			thread.start()
+
+	for thread in threads:
+		thread.join()
+	
+	return results
+
+
+#def get_assignments():
 	'''get assignments by room'''
 	print("ASSIGNMENTS BY ROOM ID:")
 	print("Found " + str(len(ROOMS)) + " room IDs in configuration file.")
+	print("")
+	results = multi_threaded_file_reader(ROOMS)
+#	print(results)
+	#length of config file:
+	for i in range(len(ROOMS)):
+		room_id 		  = list(ROOMS.keys())[i]
+		room_id_in_quotes = str("'" + room_id + "'")
+
+		if key_exists(ROOMS, [room_id, 'title']):
+			title = str("'" + ROOMS.get(room_id, {}).get('title') + "'")
+
+		else:
+			title = "Untitled"
+
+		if key_exists(ROOMS, [room_id, 'id']):
+			sensor_id = ROOMS.get(room_id, {}).get('id')
+			if (sensor_id != "Unassigned"):
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(results.items()) + "F.")
+			else:
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ".")
+
+		else:
+			print(str(i + 1).zfill(2) + ") " + str(room_id_in_quotes.ljust(22, ' ')) + ": unassigned.")
+
+	print(" ")
+	return
+#end get_assignments()
+
+def get_assignments(ROOMS):
+	'''get assignments by room'''
+	print("ASSIGNMENTS BY ROOM ID:")
+	print("Found " + str(len(ROOMS)) + " room IDs in configuration file: '" + str(config_file) + "'.")
 	print("")
 	#length of config file:
 	for i in range(len(ROOMS)):
@@ -610,7 +666,7 @@ if __name__ == "__main__":
 		print(" ")
 		
 		if (selection == 1):
-			get_assignments()
+			get_assignments(ROOMS)
 
 		elif (selection == 2):
 			get_devices_on_bus()
