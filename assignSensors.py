@@ -7,6 +7,8 @@ Updates:
 
 7/18/24 - decided to show current temp when showing current config, which takes longer to collect each sensor, but if its offline it wont show up in either list. that led me to find that get_temp() wasnt able to handle a sensor thats offline like in my other script. 
 
+8/14/24 - added logging to any changes in config file.
+
 '''
 
 
