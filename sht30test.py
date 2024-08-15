@@ -77,4 +77,4 @@ while True:
         print("Server timeout")
         print("")
 
-    time.sleep(5)
+    time.sleep(10)

@@ -48,7 +48,7 @@
 		"title": "Incubation Chamber"
 	},
 	"fruiting": {
-		"id": "28-000006526e62",
+		"id": "28-455ad4448363",
 		"title": "Fruiting Chamber"
 	}
 }

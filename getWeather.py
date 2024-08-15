@@ -10,6 +10,7 @@ import time
 import datetime
 from requests import get
 from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBServerError
 
 #openweathermap.org API Key:
 apiKey    = 'ce6df52db591b8e6b40f75c864518b61'
@@ -42,18 +43,18 @@ while True:
             },
 
             "fields": {
-                "humidity":               weatherData['current']['humidity'],
-                "feelsLike":              weatherData['current']['feels_like'],
+                "humidity":               int(weatherData['current']['humidity']),
+                "feelsLike":              float(weatherData['current']['feels_like']),
                 "currentCondition":       weatherData['current']['weather'][0]['main'],
-                "tempHigh":               weatherData['daily'][0]['temp']['max'],
-                "tempLow":                weatherData['daily'][0]['temp']['min'],
+                "tempHigh":               float(weatherData['daily'][0]['temp']['max']),
+                "tempLow":                float(weatherData['daily'][0]['temp']['min']),
                 "dailyCondition":         weatherData['daily'][0]['weather'][0]['main'],
                 "dailyConditionTomorrow": weatherData['daily'][1]['weather'][0]['main'],
-                "tempHighTomorrow":       weatherData['daily'][1]['temp']['max'],
-                "tempLowTomorrow":        weatherData['daily'][1]['temp']['min'],
-                "windDirection":          weatherData['current']['wind_deg'],
-                "windSpeed":              weatherData['current']['wind_speed'],
-                "windGust":               weatherData['daily'][0]['wind_gust'],
+                "tempHighTomorrow":       int(weatherData['daily'][1]['temp']['max']),
+                "tempLowTomorrow":        float(weatherData['daily'][1]['temp']['min']),
+                "windDirection":          int(weatherData['current']['wind_deg']),
+                "windSpeed":              float(weatherData['current']['wind_speed']),
+                "windGust":               float(weatherData['daily'][0]['wind_gust']),
                 "timeStamp": dateTimeNow
             },
             "time": dateTimeNow
@@ -72,8 +73,8 @@ while True:
         result = client.query('select * from "weather" where time >= now() - 10m and time <= now()')
         print(result)
 
-    except:
-        print("server timeout")
+    except InfluxDBServerError as e:
+        print("server failed, reason: " + str(e))
         pass
 
     time.sleep(600) # update every ten minutes (60s x 10 minutes)

@@ -12,14 +12,18 @@ Updates:
 
 
 
-
+import logging
 import os
 import ast
 import os.path
 from os import path
-import threading 
+import threading
+import datetime
+
+degree_sign = u"\N{DEGREE SIGN}"
 
 config_file = "sensors_config2.py"
+log_file    = "sensor_log.py"
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -29,14 +33,14 @@ def key_exists(roomID, keys):
 	'''recursively check if key exists in config dict'''
 	if keys and roomID:
 		return key_exists(roomID.get(keys[0]), keys[1:])
-	
+
 	return not keys and roomID is not None
 #end key_exists()
 
 def multi_threaded_file_reader(ROOMS):
 	threads = []
 	results = {}
-	
+
 
 	def read_file_thread(file_path):
 		result = read_temp(file_path)
@@ -52,12 +56,12 @@ def multi_threaded_file_reader(ROOMS):
 
 	for thread in threads:
 		thread.join()
-	
+
 	return results
 
 
 #def get_assignments():
-	'''get assignments by room'''
+	'''get assignments by room, testing multi threading'''
 	print("ASSIGNMENTS BY ROOM ID:")
 	print("Found " + str(len(ROOMS)) + " room IDs in configuration file.")
 	print("")
@@ -77,7 +81,7 @@ def multi_threaded_file_reader(ROOMS):
 		if key_exists(ROOMS, [room_id, 'id']):
 			sensor_id = ROOMS.get(room_id, {}).get('id')
 			if (sensor_id != "Unassigned"):
-				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(results.items()) + "F.")
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(results.items()) + degree_sign + "F.")
 			else:
 				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ".")
 
@@ -88,8 +92,8 @@ def multi_threaded_file_reader(ROOMS):
 	return
 #end get_assignments()
 
-def get_assignments(ROOMS):
-	'''get assignments by room'''
+def get_assignments():
+	'''get assignments by room, current'''
 	print("ASSIGNMENTS BY ROOM ID:")
 	print("Found " + str(len(ROOMS)) + " room IDs in configuration file: '" + str(config_file) + "'.")
 	print("")
@@ -107,12 +111,12 @@ def get_assignments(ROOMS):
 		if key_exists(ROOMS, [room_id, 'id']):
 			sensor_id = ROOMS.get(room_id, {}).get('id')
 			if (sensor_id != "Unassigned"):
-				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensor_id)) + "F.")
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(23, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to: " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensor_id)) + degree_sign + "F.")
 			else:
-				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ".")
+				print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(23, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to: " +  str(sensor_id).rjust(5, ' ') + ".")
 
 		else:
-			print(str(i + 1).zfill(2) + ") " + str(room_id_in_quotes.ljust(22, ' ')) + ": unassigned.")
+			print(str(i + 1).zfill(2) + ") " + str(room_id_in_quotes.ljust(23, ' ')) + ": unassigned.")
 
 	print(" ")
 	return
@@ -192,7 +196,10 @@ def reassign_sensors_to_rooms():
 					sensorNewAssignment[x - 1] 	= str(sensorIds[sensor])
 					assigned[x - 1] 			= True
 					print("")
-
+	
+	with open(log_file, "a") as log:
+		log.write("All sensors resassigned. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+		log.write("\n")
 	write_config(roomIDs, sensorNewAssignment, title, None)
 	print("")
 	return
@@ -269,7 +276,7 @@ def assign_unassigned_sensors_to_rooms():
 
 			if (sensorAssigned != True):
 				unassignedSensors.append(sensorIds[sensor])
-				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + "F."))
+				print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + degree_sign + "F."))
 #	got all unassigned sensors.
 
 	print(" ")
@@ -295,7 +302,7 @@ def assign_unassigned_sensors_to_rooms():
 		print("NO UNASSIGNED SENSORS FOUND.")
 		print("")
 		return
-	
+
 	print("Assign to unassigned rooms? Press 1 to assign them or 2 to return.")
 	textInput = int(input())
 
@@ -323,7 +330,7 @@ def assign_unassigned_sensors_to_rooms():
 					print("Assignment out of range. Please enter 0 - " + str(len(unassignedRooms)) + ".")
 					assignRoom = int(input())
 
-				elif (assigned[assignRoom - 1] != False and assignRoom !=0):
+				elif (assigned[assignRoom - 1] != False and assignRoom != 0):
 					print("Sensor already assigned. Please choose from list.")
 					assignRoom = int(input())
 
@@ -338,6 +345,8 @@ def assign_unassigned_sensors_to_rooms():
 					sensorNewRoom.append(str(unassignedRooms[i]))
 					assigned[x - 1] = True
 					print("")
+					break
+
 
 	#	build new config:
 		title               = [0] * len(ROOMS)
@@ -349,7 +358,7 @@ def assign_unassigned_sensors_to_rooms():
 
 			if key_exists (ROOMS, [roomID[i], 'title']):
 				title[i] = str(ROOMS.get(roomID[i], {}).get('title'))
-						 			
+
 			if key_exists (ROOMS, [roomID[i], 'id']):
 				sensorID[i] = (str(ROOMS.get(roomID[i], {}).get('id')))
 
@@ -358,8 +367,12 @@ def assign_unassigned_sensors_to_rooms():
 						if (roomID[i] == sensorNewRoom[j]):
 							sensorID[i] = sensorNewAssignment[j]
 
+							with open(log_file, "a") as log:
+								log.write("Sensor ID '" + sensorID[i] + "' assigned to " + str(roomID[i]) + "'. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+								log.write("\n")
+
 		print("")
-		print("Confirmed. Writing config.")
+		print("Confirmed. Writing config and log.")
 		write_config(roomID, sensorID, title, None)
 	return
 #end assign_unassigned_sensors_to_rooms()
@@ -377,7 +390,7 @@ def remove_sensor_from_room():
 
 	if (remove == 0):
 		return
-	
+
 	while (remove > len(ROOMS) or remove == 0):
 		print("Selection out for range, please reselect from list. Enter 0 to cancel.")
 		remove = int(input())
@@ -405,10 +418,15 @@ def remove_sensor_from_room():
 
 	if (confirm == 1):
 		print("")
-		print("Confirmed. Writing config.")
+		print("Confirmed. Writing config and log.")
+
+		with open(log_file, "a") as log:
+			log.write("Sensor ID '" + sensor_id[remove - 1] + "' removed from room ID " + str(room_id_in_quotes) + "'. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			log.write("\n")
+
 		sensor_id[remove - 1] = "Unassigned"
 		write_config(room_id, sensor_id, title, None)
-	
+
 	return
 #end remove_sensor_from_room()
 
@@ -426,6 +444,10 @@ def add_a_room():
 	print("New room ID: '" + str(newRoomID) + "'.")
 	print("Room title?")
 	newRoomTitle = input()
+
+	while (len(newRoomTitle) > 30):
+		print("Length must be less than 30 characters. Please re-enter:")
+		newRoomTitle = input()
 
 	print("New room title: '" + str(newRoomTitle) + "'.")
 	print(" ")
@@ -448,14 +470,18 @@ def add_a_room():
 		room_id   	= [0] * len(ROOMS)
 		sensor_id 	= [0] * len(ROOMS)
 		title     	= [0] * len(ROOMS)
-		
+
 		for i in range(len(ROOMS)):
 			room_id[i]   = list(ROOMS.keys())[i]
 			sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
 			title[i]     = ROOMS.get(room_id[i], {}).get('title')
 
+		with open(log_file, "a") as log:
+			log.write("New Room ID '" + str(newRoomID) + "' added with title: '" + str(newRoomTitle) + "'. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			log.write("\n")
+
 		write_config(room_id, sensor_id, title, newData)
-		
+
 	return
 #end add_a_room()
 
@@ -485,7 +511,7 @@ def edit_room():
 
 		if (editRoom == 0):
 			return
-		
+
 		while (editRoom > len(ROOMS) and editRoom != 0):
 			print("Selection out of range. Please choose from list. Enter 0 to cancel.")
 			editRoom = int(input())
@@ -501,7 +527,7 @@ def edit_room():
 		while (len(newRoomID) > 20):
 			print("Length must be less than 20 characters. Please re-enter:")
 			newRoomID = input()
-			
+
 		print("Changing ID '" + str(room_id[editRoom - 1]) + "' to ID '" + str(newRoomID) + "'.")
 		print("The title: '" + str(title[editRoom - 1]) + "' is unchanged.")
 		print("")
@@ -509,8 +535,13 @@ def edit_room():
 		edit = int(input())
 
 		if (edit == 1):
-			print("Confirmed. Writing config:")
+			print("Confirmed. Writing config and log:")
 			print("")
+
+			with open(log_file, "a") as log:
+				log.write("Room ID '" + str(room_id[editRoom - 1]) + "' changed to ID '" + str(newRoomID) + "'. The title: '" + str(title[editRoom - 1]) + "' is unchanged. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+				log.write("\n")
+
 			room_id[editRoom - 1] = newRoomID
 			write_config(room_id, sensor_id, title, None)
 			return
@@ -533,14 +564,14 @@ def edit_room():
 
 		if (editTitle == 0):
 			return
-		
+
 		while (editTitle > len(ROOMS) and editTitle != 0):
 			print("Selection out of range. Please choose from list. Enter 0 to cancel.")
 			editTitle = int(input())
 
 			if (editTitle == 0):
 				return
-			
+
 		print("")
 		print("CHANGE TITLE '" + str(title[editTitle - 1]) + "' TO:")
 		print("Enter new room title:")
@@ -552,12 +583,17 @@ def edit_room():
 		edit = int(input())
 
 		if (edit == 1):
-			print("Confirmed. Writing config:")
+			print("Confirmed. Writing config and log:")
 			print("")
+
+			with open(log_file, "a") as log:
+				log.write("Title '" + str(title[editTitle - 1]) + "' changed to title '" + str(newTitle) + "'. The ID: '" + str(room_id[editTitle - 1]) + "' is unchanged. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+				log.write("\n")
+
 			title[editTitle - 1] = newTitle
 			write_config(room_id, sensor_id, title, None)
 			return
-		
+
 	return
 #end edit_room()
 
@@ -579,14 +615,14 @@ def remove_a_room():
 
 	if (removeRoom == 0):
 		return
-	
+
 	while (removeRoom > len(ROOMS) and removeRoom != 0):
 		print("Selection out of range. Please choose from list. Enter 0 to cancel.")
 		removeRoom = int(input())
 
 		if (removeRoom == 0):
 			return
-		
+
 	print("")
 	print("Remove room ID: '" + str(room_id[removeRoom - 1]) + "' with title: '" + str(title[removeRoom - 1]) + "' from config file? Sensor ID: " + str(sensor_id[removeRoom - 1]) + " will be unassigned.")
 	print("Press 1 to confirm or 2 to cancel.")
@@ -594,14 +630,20 @@ def remove_a_room():
 
 	if (confirm == 1):
 		print("")
-		print("Confirmed. Writing config.")
+		print("Confirmed. Writing config and log.")
+		
+		with open(log_file, "a") as log:
+			log.write("Room ID '" + str(room_id[removeRoom - 1]) + "' with title '" + str(title[removeRoom - 1]) + "' removed from config file. Sensor ID: '" + str(sensor_id[removeRoom - 1]) + "' is now unassigned." + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+			log.write("\n")
+
 		room_id.remove(room_id[removeRoom - 1])
 		title.remove(title[removeRoom - 1])
 		sensor_id.remove(sensor_id[removeRoom - 1])
+
 		write_config(room_id, sensor_id, title, None)
 		print("")
 		return
-	
+
 	else:
 		return
 #end remove_a_room()
@@ -625,23 +667,27 @@ def get_devices_on_bus():
 					if sensor_id == sensorIds[sensor]:
 						sensorAssigned = True
 						break
+
 			try:
 				if (sensorAssigned == True):
 					room_id_in_quotes = str("'" + room_id + "'")
-					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: " + str(room_id_in_quotes.center(20, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: " + str(room_id_in_quotes.ljust(25, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + degree_sign + "F.")
 
 				else:
-					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ---- UNASSIGNED --- Temp = " + str(read_temp(sensorIds[sensor])) + "F.")
+					print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ------ UNASSIGNED ------ Temp = " + str(read_temp(sensorIds[sensor])) + degree_sign + "F.")
 
 			except:
 				print("Sensor ID: " + str(sensorIds[sensor]) + " ****** OFFLINE ******")
 
 	print("")
 	print("")
-	
+
 	return
 #end get_devices_on_bus()
 
+def write_log():
+	with open(log_file, "a") as log:
+		log.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 ############################################### STARTS HERE #########################################
 if __name__ == "__main__":
@@ -659,14 +705,14 @@ if __name__ == "__main__":
 		print("WHAT WOULD YOU LIKE TO DO?")
 		print("1) View current config file, listed by room ID and title; and current temperature.")
 		print("2) Show all devices on bus, their room assignments, and current temperature.")
-		print("3) Edit sensors assignments.")
+		print("3) Edit sensor assignments.")
 		print("4) Edit rooms.")
 		print("5) Exit.")
 		selection = int(input())
 		print(" ")
-		
+
 		if (selection == 1):
-			get_assignments(ROOMS)
+			get_assignments()
 
 		elif (selection == 2):
 			get_devices_on_bus()
@@ -698,7 +744,7 @@ if __name__ == "__main__":
 			print("3) Remove a room?")
 			roomEdit = int(input())
 			print("")
-			
+
 			if (roomEdit == 1):
 				add_a_room()
 
