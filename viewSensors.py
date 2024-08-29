@@ -25,14 +25,16 @@ os.system('modprobe w1-therm')
 
 degree_sign = u"\N{DEGREE SIGN}"
 
-
+#reads /temperature file
 def read_temp_f(file):
 	device_file = "/sys/bus/w1/devices/" + file + "/temperature"
+	#print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 	if (path.exists(device_file)):
+#		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 		try:
 			f = open (device_file, 'r')
 			temp_string = f.read()
-			f.close()
+#			f.close()
 
 			temp_c = float(temp_string) / 1000.0
 			temp_f = temp_c * 1.8 + 32.0
@@ -42,6 +44,7 @@ def read_temp_f(file):
 	else:
 		return "OFFLINE"
 
+#reads /w1_slave file and extracts temp raw data
 def read_temp(file):
 	device_file = "/sys/bus/w1/devices/" + file + "/w1_slave"
 	if (path.exists(device_file)):
@@ -83,13 +86,14 @@ def multi_threaded_file_reader(file_paths):
 while True:
 	
 	sensorIds = os.listdir("/sys/bus/w1/devices")
-	results = multi_threaded_file_reader(sensorIds)
-#	print(tempF)
-	print("Found " + str((len(sensorIds) - 1)) + " devices on bus:")
+	
+	print("Found " + str((len(sensorIds) - 1)) + " devices on bus: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 	i = 1
-
+	results = multi_threaded_file_reader(sensorIds)
+	
 	for file_path, content in results.items():
 		if (file_path.find('28-') != -1):
+			print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 			print (str(i).zfill(2) + ") Sensor ID: " + str(file_path) + ". Temp = " + str(content) + degree_sign + "F.")
 			i += 1
 
