@@ -31,7 +31,7 @@ channel     = 0
 ch0GAIN     = 1
 ch0maxPSI   = 100
 ch0minPSI   = 0
-ch0minADC   = 3900
+ch0minADC   = 4100
 ch0maxADC   = 32768
 
 while True:

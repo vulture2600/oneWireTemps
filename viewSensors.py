@@ -88,6 +88,7 @@ while True:
 	sensorIds = os.listdir("/sys/bus/w1/devices")
 	
 	print("Found " + str((len(sensorIds) - 1)) + " devices on bus: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+	print("Collecting temperatures ...")
 	i = 1
 	results = multi_threaded_file_reader(sensorIds)
 	

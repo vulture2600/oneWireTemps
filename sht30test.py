@@ -39,6 +39,9 @@ while True:
         fTemp = format(float((cTemp * 1.8) + 32), '.1f')
         print(str(fTemp), "F")
 
+        if int(fTemp) < -40:
+            pass
+
         humidity = format(float(100 * (data1[3] * 256 + data1[4]) / 65535.0), '.1f')
         print(str(humidity), "%")
 
