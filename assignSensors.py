@@ -589,7 +589,7 @@ def edit_room():
 			print("")
 
 			with open(log_file, "a") as log:
-				log.write("Title '" + str(title[editTitle - 1]) + "' changed to title '" + str(newTitle) + "'. The ID: '" + str(room_id[editTitle - 1]) + "' was not unchanged. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+				log.write("Title '" + str(title[editTitle - 1]) + "' changed to title '" + str(newTitle) + "'. The ID: '" + str(room_id[editTitle - 1]) + "' was not changed. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 				log.write("\n")
 
 			title[editTitle - 1] = newTitle
