@@ -1,5 +1,17 @@
 # InfluxDB
 
+#### Connect to InfluxDB
+
+```shell
+# Connect to InfluxDB running on the localhost without the password set:
+influx
+
+# Connect to InfluxDb running on another host:
+influx -host 192.168.1.10 -username fakeuser -password fakepassword
+
+# Same as above and specify the port and database:
+influx -host 192.168.1.10 -port 8086 -username fakeuser -password fakepassword -database SandstoneSensorData
+```
 
 #### Databases, Measurements
 
