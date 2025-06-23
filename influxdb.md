@@ -1,5 +1,16 @@
 # InfluxDB
 
+#### Systemctl for InfluxDB
+
+```shell
+sudo systemctl enable influxdb
+sudo systemctl disable influxdb
+
+sudo systemctl start influxdb
+sudo systemctl stop influxdb
+sudo systemctl status influxdb
+```
+
 #### Connect to InfluxDB
 
 ```shell
