@@ -1,7 +1,6 @@
-from pi1wire import Pi1Wire, Resolution
 import os
 import time
-
+from pi1wire import Pi1Wire, Resolution
 
 all_devices = Pi1Wire().find_all_sensors()
 #print (str(all_devices))
@@ -12,15 +11,15 @@ print (str(sensorIds))
 
 while True:
 
-	all_devices = Pi1Wire().find_all_sensors()
+    all_devices = Pi1Wire().find_all_sensors()
 
-	print("Found " + str(len(all_devices)) + " devices on bus:")
-	for temps in all_devices:
-		tempF = temps.get_temperature() * 1.8 + 32.0
-		print (f'{temps.mac_address} = {tempF:.1f}')
+    print("Found " + str(len(all_devices)) + " devices on bus:")
+    for temps in all_devices:
+        tempF = temps.get_temperature() * 1.8 + 32.0
+        print (f'{temps.mac_address} = {tempF:.1f}')
 
-	print("")
-	time.sleep(2)
+    print("")
+    time.sleep(2)
 #	s.change_resolution(Resolution.X0_5)
 #	print (f'{s.mac_address} = {s.get_temperature():.3f}')
 
