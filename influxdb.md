@@ -27,35 +27,105 @@ influx -host 192.168.1.10 -port 8086 -username fakeuser -password fakepassword -
 #### Databases, Measurements
 
 ```sql
--- In the influx shell, the semicolon at the end of the line isn't
--- necessary but will be included for the sake of convention.
--- Keywords are also capitalized but not necessary.
- 
 -- Show databases (power_monitor_sandstone, SandstoneSensorData):
-SHOW databases;
+SHOW databases
 
 -- Use the SandstoneSensorData database:
-USE SandstoneSensorData;
+USE SandstoneSensorData
 
 -- Show measurements (pressures, temps, weather):
-SHOW MEASUREMENTS;
+SHOW MEASUREMENTS
 ```
 
-#### Queries
+### Tags
+
+```sql
+SHOW TAG VALUES FROM temps WITH KEY = title
+```
+
+```
+name: temps
+key   value
+---   -----
+title Booty Wall Enclosure Temp
+title Booty Wall Outside Temp
+title Booty Wall Water Temp
+title Derrick Wall Enclosure Temp
+title Derrick Wall Outside Temp
+title Derrick Wall Water Temp
+title Main Flow Enclosure Temp
+title Main Flow Outside Temp
+title Main Flow Water Temp
+title Manifold Temp
+title North End Enclosure Temp
+title North End Outside Temp
+title North End Water Temp
+title School Room Enclosure Temp
+title School Room Outside Temp
+title School Room Water Temp
+title Shed Inside
+title Shed Outside
+title Shed SHT30
+title Stage Wall Box Temp
+title Stage Wall Enclosure Temp
+title Stage Wall Outside Temp
+title Stage Wall Water Temp
+title Upper SchlRm Enclosure Temp
+title Upper School Room Outside Temp
+title Upper School Room Water Temp
+```
+
+```sql
+SHOW TAG VALUES FROM temps WITH KEY = location
+```
+
+```
+name: temps
+key      value
+---      -----
+location UpSchlRmOutsideTemp
+location bootWallOutsideTemp
+location bootyWallEnclTemp
+location bootyWallWaterTemp
+location derrickOutsideTemp
+location derrickWallEnclTemp
+location derrickWallWaterTemp
+location mainFlowEnclTemp
+location mainFlowOutsideTemp
+location mainFlowWaterTemp
+location manifoldTemp
+location northEndEnclTemp
+location northEndOutsideTemp
+location northEndWaterTemp
+location schoolRmEnclTemp
+location schoolRmOutsideTemp
+location schoolRmWaterTemp
+location shedInside
+location shedOutside
+location shedSHT30
+location stageWallBoxTemp
+location stageWallEnclTemp
+location stageWallOutsideTemp
+location stageWallWaterTemp
+location upSchlRmEnclTemp
+location upSchlRmWaterTemp
+```
+
+### Queries
 
 ```sql
 -- List the latest 30 temps taken:
-SELECT * FROM temps ORDER BY time DESC LIMIT 30;
+SELECT * FROM temps ORDER BY time DESC LIMIT 30
 
 -- List the latest 30 readings from the Derrick Wall:
-SELECT * AS readable_time FROM temps WHERE location = 'derrickWallEnclTemp' ORDER BY time DESC LIMIT 30;
+SELECT * AS readable_time FROM temps WHERE location = 'derrickWallEnclTemp' ORDER BY time DESC LIMIT 30
 
 -- List the first temp from each day for the last 30 days:
-SELECT FIRST("temp") AS first_temp_of_day FROM "temps" WHERE time >= now() - 30d GROUP BY time(1d);
+SELECT FIRST("temp") AS first_temp_of_day FROM "temps" WHERE time >= now() - 30d GROUP BY time(1d)
 
 -- Show counts from countable columns:
-SELECT count(*) FROM temps;
+SELECT count(*) FROM temps
 
 -- List series limit to 5 rows:
-SHOW SERIES LIMIT 5;
+SHOW SERIES LIMIT 5
 ```
