@@ -1,28 +1,26 @@
-'''
+"""
 steve.a.mccluskey@gmail.com
-testing reading Adafruit ADS1115 ADC breakout board and writing to influx
+Testing reading Adafruit ADS1115 ADC breakout board and writing to influx.
+"""
 
-
-'''
-
-
-
-import time
-import Adafruit_ADS1x15
-import smbus
 import os
 import time
-import glob
-import json
-import datetime
-import os.path
-from os import path
+import Adafruit_ADS1x15
+from dotenv import load_dotenv
 from influxdb import InfluxDBClient
 
-client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'SandstoneSensorData')
-client.create_database('SandstoneSensorData')
+load_dotenv(override=True)
+
+INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
+INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv("PASSWORD")
+SENSOR_DATABASE = os.getenv("SENSOR_DATABASE")
+
+client = InfluxDBClient(INFLUXDB_HOST, INFLUXDB_PORT, USERNAME, PASSWORD, SENSOR_DATABASE)
+client.create_database(SENSOR_DATABASE)
 client.get_list_database()
-client.switch_database('SandstoneSensorData')
+client.switch_database(SENSOR_DATABASE)
 print("client ok!")
 
 adc = Adafruit_ADS1x15.ADS1115()
@@ -76,4 +74,3 @@ while True:
         print("")
 
     time.sleep(2)
-

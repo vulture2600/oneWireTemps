@@ -1,28 +1,26 @@
-'''
+"""
 steve.a.mccluskey@gmail.com
+Testing writing sht30 data to influxdb
+"""
 
-testing writing sht30 data to influxdb
-
-
-
-
-'''
-
-import smbus
-import time
 import os
-import glob
-import json
-import datetime
-import os.path
-from os import path
+import time
+from dotenv import load_dotenv
+import smbus
 from influxdb import InfluxDBClient
 
+load_dotenv(override=True)
 
-client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'SandstoneSensorData')
-client.create_database('SandstoneSensorData')
+INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
+INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv("PASSWORD")
+SENSOR_DATABASE = os.getenv("SENSOR_DATABASE")
+
+client = InfluxDBClient(INFLUXDB_HOST, INFLUXDB_PORT, USERNAME, PASSWORD, SENSOR_DATABASE)
+client.create_database(SENSOR_DATABASE)
 client.get_list_database()
-client.switch_database('SandstoneSensorData')
+client.switch_database(SENSOR_DATABASE)
 print("client ok!")
 
 bus = smbus.SMBus(1)
@@ -75,7 +73,7 @@ while True:
         print("QUERY RECIEVED")
         print("")
         print(result)
-        
+
     except:
         print("Server timeout")
         print("")

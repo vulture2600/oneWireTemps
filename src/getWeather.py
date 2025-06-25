@@ -1,29 +1,34 @@
-'''
-updating to write to database instead of json file
-7/14/24 - added time stamps to each db write
+"""
+Updating to write to database instead of json file.
+"""
 
-
-'''
-
-import json
-import time
 import datetime
+import os
+import time
+from dotenv import load_dotenv
 from requests import get
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBServerError
 
-#openweathermap.org API Key:
-apiKey    = 'ce6df52db591b8e6b40f75c864518b61'
+load_dotenv(override=True)
+
+INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
+INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
+USERNAME = os.getenv("USERNAME")
+PASSWORD = os.getenv("PASSWORD")
+TEMP_SENSOR_DATABASE = os.getenv("TEMP_SENSOR_DATABASE")
+OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
+
 #Minneapolis, MN, USA.
 lattitude = '44.9398'
 longitude = '-93.2533'
 units     = 'imperial'
-url       = 'http://api.openweathermap.org/data/2.5/onecall?lat=' + lattitude + '&lon=' + longitude + '&exclude=minutely,hourly&appid=' + apiKey + '&units=' + units
+url       = 'http://api.openweathermap.org/data/2.5/onecall?lat=' + lattitude + '&lon=' + longitude + '&exclude=minutely,hourly&appid=' + OPENWEATHERMAP_API_KEY + '&units=' + units
 
-client = InfluxDBClient('192.168.1.34', 8086, 'root', 'password', 'tempSensorData')
-client.create_database('tempSensorData')
+client = InfluxDBClient(INFLUXDB_HOST, INFLUXDB_PORT, USERNAME, PASSWORD, TEMP_SENSOR_DATABASE)
+client.create_database(TEMP_SENSOR_DATABASE)
 client.get_list_database()
-client.switch_database('tempSensorData')
+client.switch_database(TEMP_SENSOR_DATABASE)
 
 if client:
     print("client ok!")
