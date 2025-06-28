@@ -129,3 +129,38 @@ SELECT count(*) FROM temps
 -- List series limit to 5 rows:
 SHOW SERIES LIMIT 5
 ```
+
+
+### Backup/restore InfluxDB
+
+InfluxDB 1.x
+
+Source
+
+```shell
+# Check for the USB drive.
+# It will probably be sda/sda1 with filesystem type vfat.
+lsblk -f
+
+# Mount it. Create /mnt/usb if it doesn't exist.
+# sudo mkdir /mnt/usb
+sudo mount /dev/sda1 /mnt/usb
+
+# On the source
+influxd backup -portable /path/to/backup
+
+# Unmount the usb drive
+sudo umount /mnt/usb
+```
+
+Destination
+
+```shell
+# Move the usb drive to the new host and mount it as above.
+
+# On the target
+influxd restore -portable /path/to/backup
+
+# Unmount the usb drive
+sudo umount /mnt/usb
+```
