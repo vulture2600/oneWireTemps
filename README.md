@@ -1,14 +1,10 @@
 # oneWireTemps
 
-Re-writing a lot of old python code from weatherStation to make reassigning OneWire sensors easier.
+Code adapted from weatherStation along with OneWire sensors are being used to monitor ice farming for the [Sandstone Ice Park](https://www.mountainproject.com/area/106915985/sandstone-ice-park).
 
 ### InfluxDB
 
-[influxdb.md](influxdb.md)
-
-### Change log
-
-[change_log.md](change_log.md)
+[influxdb](influxdb.md)
 
 ### Slack alerts
 
@@ -28,3 +24,11 @@ In Grafana:
 4) Save it
 
 After this create alerts from the panels in the Grafana dashboard.
+
+### Issues
+
+[Issues](issues.md)
+
+### Change log
+
+[change_log](change_log.md)
