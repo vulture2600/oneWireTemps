@@ -1,6 +1,6 @@
 ### Systemd services
 
-Copy the service files in [src](src) to **/etc/systemd/system/** and follow this example to enable and start the services.
+Copy the service files to **/etc/systemd/system/** and follow this example to enable and start the services.
 
 ```shell
 sudo systemctl daemon-reload

@@ -2,9 +2,9 @@
 
 Code adapted from weatherStation along with OneWire sensors is being used to monitor ice farming at the [Sandstone Ice Park](https://www.mountainproject.com/area/106915985/sandstone-ice-park).
 
-### Application and services
+### Systemd services
 
-[Systemd services](services.md) - Python files in [src](src) are driven by SystemD services.
+[Systemd services](systemd/services.md) - Python files in [src](src) are driven by Systemd.
 
 ### InfluxDB
 
