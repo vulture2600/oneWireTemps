@@ -139,28 +139,27 @@ Source
 
 ```shell
 # Check for the USB drive.
-# It will probably be sda/sda1 with filesystem type vfat.
+# Something like /dev/sda1 with filesystem type vfat.
 lsblk -f
 
-# Mount it. Create /mnt/usb if it doesn't exist.
-# sudo mkdir /mnt/usb
-sudo mount /dev/sda1 /mnt/usb
+# Mount the filesystem
+udisksctl mount -b /dev/sda1
 
-# On the source
+# Run the backup (use path output by udisksctl)
 influxd backup -portable /path/to/backup
 
-# Unmount the usb drive
-sudo umount /mnt/usb
+# Unmount it
+udisksctl unmount -b /dev/sda1
 ```
 
 Destination
 
 ```shell
-# Move the usb drive to the new host and mount it as above.
+# Move the usb drive to the new host. Check for and mount it as above.
 
-# On the target
+# Run the restore (use path output by udisksctl)
 influxd restore -portable /path/to/backup
 
-# Unmount the usb drive
-sudo umount /mnt/usb
+# Unmount it
+udisksctl unmount -b /dev/sda1
 ```
