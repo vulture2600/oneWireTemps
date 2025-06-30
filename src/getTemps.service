@@ -3,7 +3,7 @@ Description=Get Temps
 After=multi-user.target
 
 [Service]
-Type=Idle
+Type=simple
 ExecStart=/usr/bin/python3 /home/pi/oneWireTemps/getTemps.py 
 Restart=always
 RestartSec=10
@@ -11,7 +11,5 @@ StartLimitInterval=120
 StartLimitBurst=10
 User=pi
 
-
 [Install]
 WantedBy=multi-user.target
-

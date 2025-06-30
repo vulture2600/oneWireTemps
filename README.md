@@ -1,14 +1,18 @@
 # oneWireTemps
 
-Code adapted from weatherStation along with OneWire sensors are being used to monitor ice farming for the [Sandstone Ice Park](https://www.mountainproject.com/area/106915985/sandstone-ice-park).
+Code adapted from weatherStation along with OneWire sensors is being used to monitor ice farming at the [Sandstone Ice Park](https://www.mountainproject.com/area/106915985/sandstone-ice-park).
+
+### Application and services
+
+[Systemd services](services.md) - Python files in [src](src) are driven by SystemD services.
 
 ### InfluxDB
 
-[influxdb](influxdb.md)
+[InfluxDB](influxdb.md) - The time series database used to store the OneWire sensor data.
 
 ### Alerting
 
-[Alerting](alerting.md)
+[Alerting](alerting.md) - Eventually through the alerts feature in Grafana and either Slack or Discord.
 
 ### Issues
 
@@ -16,4 +20,4 @@ Code adapted from weatherStation along with OneWire sensors are being used to mo
 
 ### Change log
 
-[change_log](change_log.md)
+[Change log](change_log.md)
