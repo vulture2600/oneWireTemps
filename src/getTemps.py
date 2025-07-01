@@ -97,7 +97,7 @@ while True:
                 },
 
                 "fields": {
-                    "temp": 	temp
+                    "temp_flt": 	float(temp)
                 }
             }
 
