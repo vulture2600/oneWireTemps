@@ -85,7 +85,7 @@ def get_assignments_fast() -> None:
 def get_assignments() -> None:
     '''get assignments by room, current'''
     print("ASSIGNMENTS BY ROOM ID:")
-    print("Found " + str(len(ROOMS)) + " room IDs in configuration file: '" + str(config_file) + "'.")
+    print("Found " + str(len(ROOMS)) + " room IDs in configuration file: '" + str(CONFIG_FILE) + "'.")
     print("")
     #length of config file:
     for i in range(len(ROOMS)):
@@ -686,7 +686,7 @@ if __name__ == "__main__":
     print("***** SENSOR ASSIGNMENT UTILITY *****")
 
     while True:
-        with open (config_file) as f:
+        with open (CONFIG_FILE) as f:
             ROOMS = f.read()
 
         ROOMS = ast.literal_eval(ROOMS)
