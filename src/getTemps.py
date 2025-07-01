@@ -86,6 +86,10 @@ while True:
             title_in_quotes   = str("'" + title + "'")
             print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
 
+            if temp == "Off":
+                print(f"temp is {temp}, skipping room {room_id}")
+                continue
+
             point = {
                 "measurement": "temps",
                 "tags": {
