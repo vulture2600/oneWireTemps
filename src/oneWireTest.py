@@ -1,11 +1,12 @@
 import os
 import time
 from pi1wire import Pi1Wire, Resolution
+from constants import DEVICES_PATH
 
 all_devices = Pi1Wire().find_all_sensors()
 #print (str(all_devices))
 
-sensorIds = os.listdir('/sys/bus/w1/devices/')
+sensorIds = os.listdir(DEVICES_PATH)
 print (str(sensorIds))
 #for s in Pi1Wire().find_all_sensors():
 

@@ -6,9 +6,10 @@ Testing writing temp sensor data to influxDB uses sensors_config.py as config fi
 import ast
 import datetime
 import os
-from dotenv import load_dotenv
 from os import path
+from dotenv import load_dotenv
 from influxdb import InfluxDBClient
+from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
 
 load_dotenv(override=True)
 
@@ -17,8 +18,6 @@ INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 TEMP_SENSOR_DATABASE = os.getenv("TEMP_SENSOR_DATABASE")
-
-config_file = "/home/pi/oneWireTemps/sensors_config2.py"
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -31,8 +30,8 @@ print("client ok!")
 
 
 def read_temp(file):
-    device_file = "/sys/bus/w1/devices/" + file + "/w1_slave"
-    if (path.exists(device_file)):
+    device_file = DEVICES_PATH + file + "/" + W1_SLAVE_FILE
+    if path.exists(device_file):
         try:
             f = open(device_file, 'r')
             lines = f.readlines()
@@ -40,7 +39,7 @@ def read_temp(file):
 
             position = lines[1].find('t=')
 
-            if (position != -1):
+            if position != -1:
                 temp_string = lines[1][position + 2:]
                 temp_c 		= float(temp_string) / 1000.0
                 temp_f 		= format((temp_c * 1.8 + 32.0), '.1f')
@@ -61,7 +60,7 @@ while True:
     print("Reading Sensors:")
     series = []
     dateTimeNow = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(config_file) as f:
+    with open(CONFIG_FILE) as f:
         ROOMS = f.read()
     ROOMS = ast.literal_eval(ROOMS)
 

@@ -8,6 +8,7 @@ import time
 import datetime
 from os import path
 import threading
+from constants import DEVICES_PATH, W1_SLAVE_FILE
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -16,7 +17,7 @@ degree_sign = u"\N{DEGREE SIGN}"
 
 #reads /temperature file
 def read_temp_f(file):
-    device_file = "/sys/bus/w1/devices/" + file + "/temperature"
+    device_file = DEVICES_PATH + file + "/temperature"
     #print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     if (path.exists(device_file)):
 #		print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -33,9 +34,9 @@ def read_temp_f(file):
     else:
         return "OFFLINE"
 
-#reads /w1_slave file and extracts temp raw data
+#reads w1_slave file and extracts temp raw data
 def read_temp(file):
-    device_file = "/sys/bus/w1/devices/" + file + "/w1_slave"
+    device_file = DEVICES_PATH + file + "/" + W1_SLAVE_FILE
     if (path.exists(device_file)):
         try:
             f = open (device_file, 'r')
@@ -74,7 +75,7 @@ def multi_threaded_file_reader(file_paths):
 
 while True:
 
-    sensorIds = os.listdir("/sys/bus/w1/devices")
+    sensorIds = os.listdir(DEVICES_PATH)
 
     print("Found " + str((len(sensorIds) - 1)) + " devices on bus: " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print("Collecting temperatures ...")
