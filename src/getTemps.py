@@ -17,7 +17,7 @@ INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
 INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
-TEMP_SENSOR_DATABASE = os.getenv("TEMP_SENSOR_DATABASE")
+TEMP_SENSOR_DATABASE = os.getenv("SENSOR_DATABASE")
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
