@@ -73,6 +73,7 @@ while True:
             if key_exists(ROOMS, [room_id, 'id']):
                 sensor_id = ROOMS.get(room_id, {}).get('id')
                 temp 	  = read_temp(sensor_id)
+                status = "On"
             else:
                 sensor_id = "unassigned"
                 temp 	  = "Off"
@@ -86,8 +87,10 @@ while True:
             print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
 
             if temp == "Off":
-                print(f"temp is {temp}, skipping room {room_id}")
-                continue
+                #print(f"temp is {temp}, skipping room {room_id}")
+                #continue
+                status = "Off"
+                temp = -100.0
 
             point = {
                 "measurement": "temps",
@@ -100,6 +103,7 @@ while True:
                 },
 
                 "fields": {
+                    "status":       str(status),
                     "temp_flt": 	float(temp)
                 }
             }
