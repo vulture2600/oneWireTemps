@@ -77,6 +77,8 @@ while True:
             else:
                 sensor_id = "unassigned"
                 temp 	  = "Off"
+  #              temp 	  = -100.0
+ #               status = "Off"
 
             if key_exists(ROOMS, [room_id, 'title']):
                 title = ROOMS.get(room_id, {}).get('title')
@@ -88,9 +90,9 @@ while True:
 
             if temp == "Off":
                 #print(f"temp is {temp}, skipping room {room_id}")
-                #continue
+  #              #continue
                 status = "Off"
-                temp = -100.0
+#                temp = -100.0
 
             point = {
                 "measurement": "temps",
