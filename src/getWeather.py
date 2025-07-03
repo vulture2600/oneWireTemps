@@ -18,12 +18,14 @@ USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 TEMP_SENSOR_DATABASE = os.getenv("TEMP_SENSOR_DATABASE")
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
+LONGITUDE = os.getenv("LONGITUDE")
+LATTITUDE = os.getenv("LATTITUDE")
 
 #Minneapolis, MN, USA.
-lattitude = '44.9398'
-longitude = '-93.2533'
+#lattitude = '44.9398'
+#longitude = '-93.2533'
 units     = 'imperial'
-url       = 'http://api.openweathermap.org/data/2.5/onecall?lat=' + lattitude + '&lon=' + longitude + '&exclude=minutely,hourly&appid=' + OPENWEATHERMAP_API_KEY + '&units=' + units
+url       = 'http://api.openweathermap.org/data/3.0/onecall?lat=' + LATTITUDE + '&lon=' + LONGITUDE+ '&exclude=minutely,hourly&appid=' + OPENWEATHERMAP_API_KEY + '&units=' + units
 
 client = InfluxDBClient(INFLUXDB_HOST, INFLUXDB_PORT, USERNAME, PASSWORD, TEMP_SENSOR_DATABASE)
 client.create_database(TEMP_SENSOR_DATABASE)

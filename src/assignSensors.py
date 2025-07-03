@@ -9,11 +9,10 @@ import ast
 import threading
 import datetime
 from os import path
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
+from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE, LOG_FILE
 
 degree_sign = u"\N{DEGREE SIGN}"
 
-log_file    = "sensor_log.py"
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -187,7 +186,7 @@ def reassign_sensors_to_rooms() -> None:
                     assigned[x - 1] 			= True
                     print("")
 
-    with open(log_file, "a") as log:
+    with open(LOG_FILE, "a") as log:
         log.write("All sensors were resassigned. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         log.write("\n")
     write_config(roomIDs, sensorNewAssignment, title, None)
@@ -196,7 +195,7 @@ def reassign_sensors_to_rooms() -> None:
 #end reassign_sensors_to_rooms()
 
 
-def write_config(roomID, sensorID, title, newRoom):
+def write_config(roomID, sensorID, title, newRoom) -> None:
     '''writes config file'''
     with open (CONFIG_FILE, 'w') as f:
         f.write("{")
@@ -238,7 +237,7 @@ def write_config(roomID, sensorID, title, newRoom):
 #end write_config()
 
 
-def assign_unassigned_sensors_to_rooms():
+def assign_unassigned_sensors_to_rooms() -> None:
     '''shows only unassigned sensors and unassigned rooms'''
     print("")
     print("REASSIGN ONLY UNASSIGNED SENSORS:")
@@ -284,7 +283,7 @@ def assign_unassigned_sensors_to_rooms():
 #	got all unassigned rooms.
 
     print(" ")
-    print("Found " + str(len(unassignedSensors)) + " unassigned sensors on bus.")
+    print("Found " + str(len(unassignedSensors)) + " unassigned sensors on OneWire bus.")
     print("Found " + str(len(unassignedRooms)) +   " rooms with no assigned sensors.")
     print(" ")
 
@@ -357,7 +356,7 @@ def assign_unassigned_sensors_to_rooms():
                         if (roomID[i] == sensorNewRoom[j]):
                             sensorID[i] = sensorNewAssignment[j]
 
-                            with open(log_file, "a") as log:
+                            with open(LOG_FILE, "a") as log:
                                 log.write("Sensor ID '" + sensorID[i] + "' assigned to '" + str(roomID[i]) + "'. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                                 log.write("\n")
 
@@ -368,7 +367,7 @@ def assign_unassigned_sensors_to_rooms():
 #end assign_unassigned_sensors_to_rooms()
 
 
-def remove_sensor_from_room():
+def remove_sensor_from_room() -> None:
     ''' allows you to remove a sensor assignment from a room'''
     print("")
     print("REMOVE SENSOR FROM ROOM:")
@@ -410,7 +409,7 @@ def remove_sensor_from_room():
         print("")
         print("Confirmed. Writing config and log.")
 
-        with open(log_file, "a") as log:
+        with open(LOG_FILE, "a") as log:
             log.write("Sensor ID '" + sensor_id[remove - 1] + "' removed from room ID " + str(room_id_in_quotes) + ". " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             log.write("\n")
 
@@ -421,7 +420,7 @@ def remove_sensor_from_room():
 #end remove_sensor_from_room()
 
 
-def add_a_room():
+def add_a_room() -> None:
     '''add new room'''
     print("ADD NEW ROOM:")
     print("New room ID? 20 characters max. No spaces or special characters.")
@@ -466,7 +465,7 @@ def add_a_room():
             sensor_id[i] = ROOMS.get(room_id[i], {}).get('id')
             title[i]     = ROOMS.get(room_id[i], {}).get('title')
 
-        with open(log_file, "a") as log:
+        with open(LOG_FILE, "a") as log:
             log.write("New Room ID '" + str(newRoomID) + "' added with title: '" + str(newRoomTitle) + "'. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             log.write("\n")
 
@@ -476,7 +475,7 @@ def add_a_room():
 #end add_a_room()
 
 
-def edit_room():
+def edit_room() -> None:
     print("EDIT A ROOM:")
     print("Do you want to:")
     print("1) Change room ID?")
@@ -528,7 +527,7 @@ def edit_room():
             print("Confirmed. Writing config and log:")
             print("")
 
-            with open(log_file, "a") as log:
+            with open(LOG_FILE, "a") as log:
                 log.write("Room ID '" + str(room_id[editRoom - 1]) + "' changed to ID '" + str(newRoomID) + "'. The title: '" + str(title[editRoom - 1]) + "' was not changed. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 log.write("\n")
 
@@ -576,7 +575,7 @@ def edit_room():
             print("Confirmed. Writing config and log:")
             print("")
 
-            with open(log_file, "a") as log:
+            with open(LOG_FILE, "a") as log:
                 log.write("Title '" + str(title[editTitle - 1]) + "' changed to title '" + str(newTitle) + "'. The ID: '" + str(room_id[editTitle - 1]) + "' was not changed. " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 log.write("\n")
 
@@ -588,7 +587,7 @@ def edit_room():
 #end edit_room()
 
 
-def remove_a_room():
+def remove_a_room() -> None:
     print("REMOVE ROOM FROM CONFIG FILE:")
     get_assignments()
     room_id   = [0] * len(ROOMS)
@@ -622,7 +621,7 @@ def remove_a_room():
         print("")
         print("Confirmed. Writing config and log.")
 
-        with open(log_file, "a") as log:
+        with open(LOG_FILE, "a") as log:
             log.write("Room ID '" + str(room_id[removeRoom - 1]) + "' with title '" + str(title[removeRoom - 1]) + "' removed from config file. Sensor ID: '" + str(sensor_id[removeRoom - 1]) + "' is now unassigned." + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             log.write("\n")
 
@@ -639,7 +638,7 @@ def remove_a_room():
 #end remove_a_room()
 
 
-def get_devices_on_bus():
+def get_devices_on_bus() -> None:
     '''shows all devices on 1wire bus and shows room assignments, if any'''
     sensorIds = os.listdir(DEVICES_PATH)
     print("FOUND " + str((len(sensorIds) - 1)) + " DEVICES ON BUS:")
@@ -675,8 +674,8 @@ def get_devices_on_bus():
     return
 #end get_devices_on_bus()
 
-def write_log():
-    with open(log_file, "a") as log:
+def write_log() -> None:
+    with open(LOG_FILE, "a") as log:
         log.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 ############################################### STARTS HERE #########################################

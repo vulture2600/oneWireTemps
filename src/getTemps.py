@@ -9,7 +9,7 @@ import os
 from os import path
 from dotenv import load_dotenv
 from influxdb import InfluxDBClient
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
+from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE, LOG_FILE
 
 load_dotenv(override=True)
 
@@ -29,7 +29,7 @@ client.switch_database(TEMP_SENSOR_DATABASE)
 print("client ok!")
 
 
-def read_temp(file):
+def read_temp(file) -> str:
     device_file = DEVICES_PATH + file + "/" + W1_SLAVE_FILE
     if path.exists(device_file):
         try:
@@ -50,7 +50,7 @@ def read_temp(file):
         return "Off"
 
 
-def key_exists(roomID, keys):
+def key_exists(roomID, keys) -> bool:
     if keys and roomID:
         return key_exists(roomID.get(keys[0]), keys[1:])
     return not keys and roomID is not None
@@ -135,6 +135,8 @@ while True:
         print(result)
         print("Query recieved.")
         print(" ")
-    except:
-        print("Server timeout")
+    except InfluxDBServerError as e:
+#        print("Server timeout")
+        print("server failed, reason: " + str(e))
         print(" ")
+        pass
