@@ -55,7 +55,7 @@ while True:
             },
 
             "fields": {
-                "temp":     fTemp,
+                "temp_flt": float(fTemp),
                 "humidity": humidity
             }
         }

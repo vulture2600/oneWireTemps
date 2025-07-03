@@ -9,7 +9,7 @@ import os
 from os import path
 from dotenv import load_dotenv
 from influxdb import InfluxDBClient
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE, LOG_FILE
+from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
 
 load_dotenv(override=True)
 
@@ -64,7 +64,7 @@ while True:
         ROOMS = f.read()
     ROOMS = ast.literal_eval(ROOMS)
 
-    #get number of rooms from config file and make arrays:
+    # get number of rooms from config file and make arrays:
     count = len(ROOMS)
 
     for i in range(count):
@@ -77,8 +77,8 @@ while True:
             else:
                 sensor_id = "unassigned"
                 temp 	  = "Off"
-  #              temp 	  = -100.0
- #               status = "Off"
+                # temp 	  = -100.0
+                # status = "Off"
 
             if key_exists(ROOMS, [room_id, 'title']):
                 title = ROOMS.get(room_id, {}).get('title')
@@ -89,10 +89,10 @@ while True:
             print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
 
             if temp == "Off":
-                #print(f"temp is {temp}, skipping room {room_id}")
-  #              #continue
+                # print(f"temp is {temp}, skipping room {room_id}")
+                # continue
                 status = "Off"
-#                temp = -100.0
+                # temp = -100.0
 
             point = {
                 "measurement": "temps",
@@ -136,7 +136,6 @@ while True:
         print("Query recieved.")
         print(" ")
     except InfluxDBServerError as e:
-#        print("Server timeout")
+        # print("Server timeout")
         print("server failed, reason: " + str(e))
         print(" ")
-        pass
