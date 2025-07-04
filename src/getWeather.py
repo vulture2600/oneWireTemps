@@ -1,5 +1,5 @@
 """
-Updating to write to database instead of json file.
+Get weather and write to InfluxDB.
 """
 
 import datetime
@@ -10,7 +10,12 @@ from requests import get
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBServerError
 
-load_dotenv(override=True)
+APP_ENV = os.getenv("APP_ENV")
+
+if APP_ENV is None:
+    load_dotenv(override=True)
+else:
+    load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
 INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
@@ -20,15 +25,15 @@ TEMP_SENSOR_DATABASE = os.getenv("TEMP_SENSOR_DATABASE")
 OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 
 LOCATION = os.getenv("LOCATION")
-LATTITUDE = os.getenv("LATTITUDE")
+LATITUDE = os.getenv("LATITUDE")
 LONGITUDE = os.getenv("LONGITUDE")
 
 # LOCATION = "Minneapolis"
-# LATTITUDE = 44.9398
+# LATITUDE = 44.9398
 # LONGITUDE = -93.2533
 
-UNITS     = 'imperial'
-URL       = 'http://api.openweathermap.org/data/3.0/onecall?lat=' + str(LATTITUDE) + '&lon=' + str(LONGITUDE) + '&exclude=minutely,hourly&appid=' + OPENWEATHERMAP_API_KEY + '&units=' + UNITS
+UNITS = 'imperial'
+URL   = 'http://api.openweathermap.org/data/3.0/onecall?lat=' + str(LATITUDE) + '&lon=' + str(LONGITUDE) + '&exclude=minutely,hourly&appid=' + OPENWEATHERMAP_API_KEY + '&units=' + UNITS
 
 client = InfluxDBClient(INFLUXDB_HOST, INFLUXDB_PORT, USERNAME, PASSWORD, TEMP_SENSOR_DATABASE)
 client.create_database(TEMP_SENSOR_DATABASE)
@@ -72,7 +77,6 @@ while True:
 
         series.append(point)
         print(point)
-
     except:
         print("weather failed")
 
@@ -81,7 +85,6 @@ while True:
         print("Data posted to DB.")
         result = client.query('select * from "weather" where time >= now() - 10m and time <= now()')
         print(result)
-
     except InfluxDBServerError as e:
         print("server failed, reason: " + str(e))
 

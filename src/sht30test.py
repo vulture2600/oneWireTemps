@@ -1,6 +1,6 @@
 """
 steve.a.mccluskey@gmail.com
-Testing writing sht30 data to influxdb
+Get sht30 sensor data and write to InfluxDB.
 """
 
 import os
@@ -9,7 +9,12 @@ from dotenv import load_dotenv
 import smbus
 from influxdb import InfluxDBClient
 
-load_dotenv(override=True)
+APP_ENV = os.getenv("APP_ENV")
+
+if APP_ENV is None:
+    load_dotenv(override=True)
+else:
+    load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
 INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
