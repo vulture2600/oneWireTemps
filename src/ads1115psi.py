@@ -14,7 +14,7 @@ import time
 from os import path
 from influxdb import InfluxDBClient
 from dotenv import load_dotenv
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
+from constants import DEVICES_PATH, W1_SLAVE_FILE
 
 APP_ENV = os.getenv("APP_ENV")
 
@@ -82,7 +82,7 @@ ch3maxADC    = int(os.getenv("ch3maxADC"))
 ch3enabled   = str(os.getenv("ch3enabled"))
 
 adc = Adafruit_ADS1x15.ADS1115()
-print(adc)
+
 while True:
     print("Reading ADC:")
     series = []
