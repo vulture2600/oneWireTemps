@@ -127,6 +127,7 @@ while True:
     series.append(point)
     print(str(i + 1) + " sensors collected.")
     print(series)
+
     try:
         client.write_points(series)
         print("Data posted to DB.")
@@ -135,6 +136,7 @@ while True:
         print(result)
         print("Query recieved.")
         print(" ")
+        
     except InfluxDBServerError as e:
         # print("Server timeout")
         print("server failed, reason: " + str(e))
