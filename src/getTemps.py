@@ -1,6 +1,6 @@
 """
 steve.a.mccluskey@gmail.com
-Testing writing temp sensor data to influxDB uses sensors_config.py as config file
+Get temp sensor data and write to InfluxDB. See .env files for required config file.
 """
 
 import ast
@@ -9,15 +9,21 @@ import os
 from os import path
 from dotenv import load_dotenv
 from influxdb import InfluxDBClient
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE
+from constants import DEVICES_PATH, W1_SLAVE_FILE
 
-load_dotenv(override=True)
+APP_ENV = os.getenv("APP_ENV")
+
+if APP_ENV is None:
+    load_dotenv(override=True)
+else:
+    load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
 INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 TEMP_SENSOR_DATABASE = os.getenv("SENSOR_DATABASE")
+CONFIG_FILE = os.getenv("CONFIG_FILE")
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
@@ -86,7 +92,14 @@ while True:
                 title = "Untitled"
             room_id_in_quotes = str("'" + room_id + "'")
             title_in_quotes   = str("'" + title + "'")
-            print("Sensor " + str(i + 1).zfill(2) +  ") collected. Room ID: " + str(room_id_in_quotes).ljust(21, ' ') + "Title: " + str(title_in_quotes).ljust(29, ' ') + "Sensor ID: " + str(sensor_id).center(15, '-') + ", Temp = " + str(temp)+ "F")
+
+            print(
+                "Sensor " + str(i + 1).zfill(2) + ") collected. " +
+                "Room ID: " + str(room_id_in_quotes).ljust(21, ' ') +
+                "Title: " + str(title_in_quotes).ljust(29, ' ') +
+                "Sensor ID: " + str(sensor_id).center(15, '-') +
+                ", Temp = " + str(temp) + "F"
+            )
 
             if temp == "Off":
                 # print(f"temp is {temp}, skipping room {room_id}")
@@ -136,7 +149,6 @@ while True:
         print(result)
         print("Query recieved.")
         print(" ")
-        
     except InfluxDBServerError as e:
         # print("Server timeout")
         print("server failed, reason: " + str(e))

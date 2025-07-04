@@ -9,13 +9,23 @@ import ast
 import threading
 import datetime
 from os import path
-from constants import CONFIG_FILE, DEVICES_PATH, W1_SLAVE_FILE, LOG_FILE
+from dotenv import load_dotenv
+from constants import LOG_FILE, DEVICES_PATH, W1_SLAVE_FILE
 
-degree_sign = u"\N{DEGREE SIGN}"
+APP_ENV = os.getenv("APP_ENV")
 
+if APP_ENV is None:
+    load_dotenv(override=True)
+else:
+    load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
+
+CONFIG_FILE = os.getenv("CONFIG_FILE")
+
+DEGREE_SIGN = u"\N{DEGREE SIGN}"
 
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
+
 sensorIds = os.listdir(DEVICES_PATH)
 
 def key_exists(roomID, keys) -> bool:
@@ -70,7 +80,7 @@ def get_assignments_fast() -> None:
         if key_exists(ROOMS, [room_id, 'id']):
             sensor_id = ROOMS.get(room_id, {}).get('id')
             if (sensor_id != "Unassigned"):
-                print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(results.items()) + degree_sign + "F.")
+                print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(results.items()) + DEGREE_SIGN + "F.")
             else:
                 print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(22, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to : " +  str(sensor_id).rjust(5, ' ') + ".")
 
@@ -100,7 +110,7 @@ def get_assignments() -> None:
         if key_exists(ROOMS, [room_id, 'id']):
             sensor_id = ROOMS.get(room_id, {}).get('id')
             if (sensor_id != "Unassigned"):
-                print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(23, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to: " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensor_id)) + degree_sign + "F.")
+                print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(23, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to: " +  str(sensor_id).rjust(5, ' ') + ". Temp = " + str(read_temp(sensor_id)) + DEGREE_SIGN + "F.")
             else:
                 print(str(i + 1).zfill(2) + ") ID: " + str(room_id_in_quotes.ljust(23, ' ')) + "Title: " + str(title.ljust(30, ' ')) + "Assigned to: " +  str(sensor_id).rjust(5, ' ') + ".")
 
@@ -265,7 +275,7 @@ def assign_unassigned_sensors_to_rooms() -> None:
 
             if (sensorAssigned != True):
                 unassignedSensors.append(sensorIds[sensor])
-                print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + degree_sign + "F."))
+                print("Sensor ID: " + str(sensorIds[sensor]) + " UNASSIGNED. Temp = " + (str(read_temp(sensorIds[sensor])) + DEGREE_SIGN + "F."))
 #	got all unassigned sensors.
 
     print(" ")
@@ -660,10 +670,10 @@ def get_devices_on_bus() -> None:
             try:
                 if (sensorAssigned == True):
                     room_id_in_quotes = str("'" + room_id + "'")
-                    print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: " + str(room_id_in_quotes.ljust(25, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + degree_sign + "F.")
+                    print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: " + str(room_id_in_quotes.ljust(25, ' ')) + "Temp = " + str(read_temp(sensorIds[sensor])) + DEGREE_SIGN + "F.")
 
                 else:
-                    print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ------ UNASSIGNED ------ Temp = " + str(read_temp(sensorIds[sensor])) + degree_sign + "F.")
+                    print("Sensor ID: " + str(sensorIds[sensor]) + "  Assigned to: ------ UNASSIGNED ------ Temp = " + str(read_temp(sensorIds[sensor])) + DEGREE_SIGN + "F.")
 
             except:
                 print("Sensor ID: " + str(sensorIds[sensor]) + " ****** OFFLINE ******")

@@ -4,12 +4,16 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/pi/oneWireTemps/getWeather.py 
+User=pi
+WorkingDirectory=/home/pi/oneWireTemps
+ExecStart=/usr/bin/python3 getWeather.py
+
+Environment=APP_ENV=production1
+
 Restart=always
 RestartSec=10
 StartLimitInterval=120
 StartLimitBurst=10
-User=pi
 
 [Install]
 WantedBy=multi-user.target
