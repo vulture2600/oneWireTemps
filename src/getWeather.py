@@ -13,8 +13,10 @@ from influxdb.exceptions import InfluxDBServerError
 APP_ENV = os.getenv("APP_ENV")
 
 if APP_ENV is None:
+    print("APP_ENV not set, using .env file")
     load_dotenv(override=True)
 else:
+    print(f"Using .env.{APP_ENV} file")
     load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")

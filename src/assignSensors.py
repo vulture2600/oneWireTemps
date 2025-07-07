@@ -15,8 +15,10 @@ from constants import LOG_FILE, DEVICES_PATH, W1_SLAVE_FILE
 APP_ENV = os.getenv("APP_ENV")
 
 if APP_ENV is None:
+    print("APP_ENV not set, using .env file")
     load_dotenv(override=True)
 else:
+    print(f"Using .env.{APP_ENV} file")
     load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 CONFIG_FILE = os.getenv("CONFIG_FILE")

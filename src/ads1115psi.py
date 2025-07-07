@@ -1,26 +1,21 @@
-'''
+"""
 steve.a.mccluskey@gmail.com
 testing reading Adafruit ADS1115 ADC breakout board and writing to influx
+"""
 
-
-'''
-
-
-
-import time
-import Adafruit_ADS1x15
 import os
 import time
-from os import path
+import Adafruit_ADS1x15
 from influxdb import InfluxDBClient
 from dotenv import load_dotenv
-from constants import DEVICES_PATH, W1_SLAVE_FILE
 
 APP_ENV = os.getenv("APP_ENV")
 
 if APP_ENV is None:
+    print("APP_ENV not set, using .env file")
     load_dotenv(override=True)
 else:
+    print(f"Using .env.{APP_ENV} file")
     load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
@@ -34,7 +29,6 @@ client.create_database(SENSOR_DATABASE)
 client.get_list_database()
 client.switch_database(SENSOR_DATABASE)
 print("client ok!")
-
 
 
 #load environment variables for channels
@@ -54,14 +48,14 @@ ch0enabled   = str(os.getenv("ch0enabled"))
 channel1ID   = str(os.getenv("channel1ID"))
 channel1name = str(os.getenv("channel1name"))
 channel1     = int(os.getenv("channel1"))
-ch1GAIN      = float(os.getenv("ch1GAIN")) 
+ch1GAIN      = float(os.getenv("ch1GAIN"))
 ch1maxPSI    = int(os.getenv("ch1maxPSI"))
 ch1minPSI    = int(os.getenv("ch1minPSI"))
 ch1minADC    = int(os.getenv("ch1minADC"))
 ch1maxADC    = int(os.getenv("ch1maxADC"))
 ch1enabled   = str(os.getenv("ch1enabled"))
 
-channel2ID   = str(os.getenv("channel2ID"))  
+channel2ID   = str(os.getenv("channel2ID"))
 channel2name = str(os.getenv("channel2name"))
 channel2     = int(os.getenv("channel2"))
 ch2GAIN      = float(os.getenv("ch2GAIN"))
@@ -87,7 +81,7 @@ while True:
     print("Reading ADC:")
     series = []
     try:
-        if (ch0enabled == "Enabled"):
+        if ch0enabled == "Enabled":
             print("Reading channel " + str(channel0) + "...")
             #value0  = adc.read_adc(0, gain = 1)
             value0  = adc.read_adc(channel0, gain = ch0GAIN)
@@ -100,7 +94,7 @@ while True:
             psi0 = str("OFF")
             print(str(psi0) + ", channel " + str(channel0) + " disabled.")
 
-        if (ch1enabled == "Enabled"):
+        if ch1enabled == "Enabled":
             print("Reading channel " + str(channel1) + "...")
             value1 = adc.read_adc(channel1, gain = ch1GAIN)
             psi1 = format((((value1 - ch1minADC) * (ch1maxPSI - ch1minPSI)) / (ch1maxADC - ch1minADC) + ch1minPSI), '.1f')
@@ -111,7 +105,7 @@ while True:
             psi1 = str("OFF")
             print(str(psi1) + ", channel " + str(channel1) + " disabled.")
 
-        if (ch2enabled == "Enabled"):
+        if ch2enabled == "Enabled":
             print("Reading channel " + str(channel2) + "...")
             value2 = adc.read_adc(channel2, gain = ch2GAIN)
             psi2 = format((((value2 - ch2minADC) * (ch2maxPSI - ch2minPSI)) / (ch2maxADC - ch2minADC) + ch2minPSI), '.1f')
@@ -122,7 +116,7 @@ while True:
             psi2 = str("OFF")
             print(str(psi2) + ", channel " + str(channel2) + " disabled.")
 
-        if (ch3enabled == "Enabled"):
+        if ch3enabled == "Enabled":
             print("Reading channel " + str(channel3) + "...")
             value3 = adc.read_adc(channel3, gain = ch2GAIN)
             psi3 = format((((value3 - ch3minADC) * (ch3maxPSI - ch2minPSI)) / (ch3maxADC - ch3minADC) + ch3minPSI), '.1f')
@@ -154,7 +148,7 @@ while True:
         print(point)
         series.append(point)
 
-        
+
         point = {
             "measurement": "pressures",
             "tags": {
@@ -173,7 +167,7 @@ while True:
         print(point)
         series.append(point)
 
-            
+
         point = {
             "measurement": "pressures",
             "tags": {
@@ -192,7 +186,7 @@ while True:
         print(point)
         series.append(point)
 
-            
+
         point = {
             "measurement": "pressures",
             "tags": {
