@@ -8,8 +8,6 @@ User=pi
 WorkingDirectory=/home/pi/oneWireTemps
 ExecStart=/usr/bin/python3 sht30test.py
 
-Environment=APP_ENV=production1
-
 Restart=always
 RestartSec=10
 StartLimitInterval=120

@@ -6,11 +6,7 @@ After=multi-user.target
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/oneWireTemps
-ExecStartPre=/usr/bin/sh -c 'echo APP_ENV=$(hostname) > /tmp/getTemps.env'
-EnvironmentFile=/tmp/getTemps.env
 ExecStart=/usr/bin/python3 getTemps.py
-
-#Environment=APP_ENV=HOSTNAME
 
 Restart=always
 RestartSec=10

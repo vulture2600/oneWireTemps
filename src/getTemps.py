@@ -6,19 +6,20 @@ Get temp sensor data and write to InfluxDB. See .env files for required config f
 import ast
 import datetime
 import os
+import socket
 from os import path
 from dotenv import load_dotenv
 from influxdb import InfluxDBClient
 from constants import DEVICES_PATH, W1_SLAVE_FILE
 
-APP_ENV = os.getenv("APP_ENV")
+HOSTNAME = socket.gethostname()
 
-if APP_ENV is None:
-    print("APP_ENV not set, using .env file")
-    load_dotenv(override=True)
+if 'INVOCATION_ID' in os.environ:
+    print(f"Running under Systemd, using .env.{HOSTNAME} file")
+    load_dotenv(override=True, dotenv_path=f".env.{HOSTNAME}")
 else:
-    print(f"Using .env.{APP_ENV} file")
-    load_dotenv(override=True, dotenv_path=f".env.{APP_ENV}")
+    print("Using .env file")
+    load_dotenv(override=True)
 
 INFLUXDB_HOST = os.getenv("INFLUXDB_HOST")
 INFLUXDB_PORT = os.getenv("INFLUXDB_PORT")
