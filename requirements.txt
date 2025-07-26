@@ -1,4 +1,0 @@
-Adafruit_ADS1x15
-pi1wire
-influxdb
-smbus
